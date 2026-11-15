@@ -24,7 +24,7 @@ import {
   VolumeX,
   Settings,
   Terminal,
-  Zap,
+  Sparkles,
 } from 'lucide-react';
 
 const STAGES = {
@@ -319,49 +319,48 @@ export default function App() {
       <StarBackground />
 
       {/* FULL-BLEED FROSTED HEADER (Matching HackUTA Odyssey & Reference Pill Navigation) */}
-      <header className="relative z-40 w-full bg-[#f6eddf]/80 backdrop-blur-md border-b border-[#ded0bc] px-4 sm:px-8 py-3.5 select-none">
+      <header className="relative z-40 w-full bg-[#f6eddf]/85 backdrop-blur-md border-b border-[#ded0bc]/70 px-4 sm:px-8 py-3 select-none shadow-[0_2px_12px_rgba(26,58,82,0.03)]">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
           {/* Logo & Brand Title */}
           <div
             onClick={handleReset}
-            className="flex items-center gap-3 cursor-pointer group"
+            className="flex items-center gap-3 cursor-pointer group shrink-0"
           >
-            <div className="w-8 h-8 rounded-full bg-[#eee3d2] border border-[#ded0bc] flex items-center justify-center text-[#b4654d] font-serif font-bold text-sm shadow-sm group-hover:scale-105 transition-transform">
+            <div className="w-8 h-8 min-w-[32px] min-h-[32px] rounded-full bg-[#eee3d2] border border-[#ded0bc] flex items-center justify-center text-[#b4654d] font-serif font-bold text-sm shadow-sm group-hover:scale-105 transition-transform shrink-0">
               Ω
             </div>
-            <div className="flex items-center gap-2.5">
-              <span className="font-display text-sm sm:text-base font-bold tracking-[0.18em] text-[#1a3a52] uppercase group-hover:text-[#b4654d] transition-colors">
+            <div className="flex items-center gap-2.5 whitespace-nowrap">
+              <span className="font-display text-sm sm:text-base font-bold tracking-[0.16em] text-[#1a3a52] uppercase group-hover:text-[#b4654d] transition-colors">
                 The Council of Olympus
               </span>
-              <span className="hidden lg:inline-block text-[10px] font-mono tracking-wider px-2.5 py-0.5 rounded-full bg-[#eee3d2] text-[#506575] border border-[#ded0bc]">
+              <span className="hidden xl:inline-block text-[10px] font-mono tracking-wider px-2 py-0.5 rounded-full bg-[#eee3d2] text-[#506575] border border-[#ded0bc]">
                 Homeric Decision Engine
               </span>
             </div>
           </div>
 
-          {/* Center Archetype Capsule (HackUTA Pill Style) */}
-          <div className="hidden md:flex items-center gap-2.5 px-4 py-1.5 rounded-full header-pill-nav text-xs text-[#1a3a52]">
+          {/* Center Archetype Capsule (Refined Minimalist Navigation) */}
+          <div className="hidden lg:flex items-center gap-2 px-3.5 py-1 rounded-full header-pill-nav text-[11px] font-sans text-[#1a3a52] shrink-0">
             <span className="w-1.5 h-1.5 rounded-full bg-[#b4654d] animate-pulse" />
-            <span className="font-sans text-[11px] text-[#1a3a52] font-semibold">
-              Athena (Strategy) • Poseidon (Downside) • Hermes (Agility) • Odysseus (Ruling)
+            <span className="font-semibold text-[#1a3a52] tracking-wide">
+              Athena <span className="text-[#ded0bc] mx-1">•</span> Poseidon <span className="text-[#ded0bc] mx-1">•</span> Hermes <span className="text-[#ded0bc] mx-1">•</span> Odysseus
             </span>
           </div>
 
           {/* Actions & Utilities */}
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={handleLoadDemoDilemma}
-              title="Load sample scenario"
-              className="px-3.5 py-1.5 rounded-full header-pill-nav text-[#1a3a52] hover:bg-[#fffcf7] text-xs font-sans font-semibold transition flex items-center gap-1.5"
+              title="Load Instant Demo Dilemma"
+              className="p-2 rounded-full header-pill-nav text-[#b4654d] hover:text-[#1a3a52] hover:bg-[#fffbf5] transition flex items-center justify-center"
             >
-              <Zap size={13} className="text-[#b4654d]" />
-              <span className="hidden sm:inline">Sample Dilemma</span>
+              <Sparkles size={15} />
             </button>
 
             <button
               onClick={toggleMute}
               title={isMuted ? 'Unmute Audio' : 'Mute Audio'}
-              className={`p-2 rounded-full border transition ${
+              className={`p-2 rounded-full border transition flex items-center justify-center ${
                 isMuted
                   ? 'bg-[#fff0ed] text-[#b4654d] border-[#b4654d]'
                   : 'header-pill-nav text-[#506575] hover:text-[#1a3a52]'
@@ -373,7 +372,7 @@ export default function App() {
             <button
               onClick={() => setIsDebugOpen(true)}
               title="Telemetry & Logs"
-              className="p-2 rounded-full header-pill-nav text-[#506575] hover:text-[#1a3a52] transition"
+              className="p-2 rounded-full header-pill-nav text-[#506575] hover:text-[#1a3a52] transition flex items-center justify-center"
             >
               <Terminal size={15} />
             </button>
@@ -381,7 +380,7 @@ export default function App() {
             <button
               onClick={() => setIsSettingsOpen(true)}
               title="Settings"
-              className="p-2 rounded-full header-pill-nav text-[#506575] hover:text-[#1a3a52] transition"
+              className="p-2 rounded-full header-pill-nav text-[#506575] hover:text-[#1a3a52] transition flex items-center justify-center"
             >
               <Settings size={15} />
             </button>

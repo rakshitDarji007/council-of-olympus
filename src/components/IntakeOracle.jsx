@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import GreekMeander from './GreekMeander.jsx';
-import { Mic, MicOff, ArrowRight, AlertTriangle, Compass, Send } from 'lucide-react';
+import { Mic, MicOff, ArrowRight, AlertTriangle, Compass, Send, Sparkles } from 'lucide-react';
 
 export default function IntakeOracle({
   dilemma = '',
@@ -127,7 +127,7 @@ export default function IntakeOracle({
 
               {/* Bottom Action Bar */}
               <div className="flex items-center justify-between pt-4 mt-2 border-t border-[#ded0bc]">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2.5">
                   <button
                     type="button"
                     onClick={isRecording ? onStopVoiceInput : onStartVoiceInput}
@@ -143,6 +143,20 @@ export default function IntakeOracle({
                       {isRecording ? 'Listening...' : 'Voice Dictation'}
                     </span>
                   </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const randomSample = sampleDilemmas[Math.floor(Math.random() * sampleDilemmas.length)];
+                      setInputText(randomSample.text);
+                    }}
+                    title="Insert a sample dilemma into the drafting box"
+                    className="px-3 py-1.5 rounded-full header-pill-nav text-[#506575] hover:text-[#b4654d] hover:bg-[#fffbf5] text-xs transition flex items-center gap-1.5"
+                  >
+                    <Sparkles size={12} className="text-[#b4654d]" />
+                    <span className="text-[11px] font-semibold">Try Example</span>
+                  </button>
+
                   <span className="text-[11px] text-[#8ca1aa] hidden md:inline font-mono">
                     ⌘ + Enter
                   </span>
