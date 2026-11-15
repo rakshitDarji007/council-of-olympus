@@ -13,57 +13,68 @@ body {
   color: #F8F6F0;
   font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   overflow-x: hidden;
+  background: 
+    radial-gradient(ellipse at 50% -10%, rgba(228, 164, 149, 0.25) 0%, rgba(206, 132, 145, 0.16) 30%, rgba(25, 28, 48, 0.45) 65%, rgba(7, 8, 13, 1) 100%),
+    linear-gradient(180deg, #111424 0%, #0A0C16 40%, #06070B 100%);
+  background-attachment: fixed;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Atmospheric Dawn-over-the-Aegean Canvas (Inspired by Homer's Rosy-Fingered Dawn & Image 1) */
-.dawn-ambient-canvas {
-  background: 
-    radial-gradient(circle at 50% -5%, rgba(228, 164, 149, 0.22) 0%, rgba(206, 132, 145, 0.14) 28%, rgba(25, 28, 48, 0.4) 65%, rgba(7, 8, 13, 1) 100%),
-    linear-gradient(180deg, #111422 0%, #0A0C16 45%, #06070B 100%);
-  background-attachment: fixed;
-}
-
-/* Master Glassmorphism Editorial Card (Inspired by Image 1 & Hermes Agent) */
+/* Master Glassmorphism Surfaces */
 .editorial-card {
-  background: rgba(18, 22, 36, 0.62);
+  background: rgba(18, 22, 36, 0.55);
   backdrop-filter: blur(28px) saturate(140%);
   -webkit-backdrop-filter: blur(28px) saturate(140%);
-  border: 1px solid rgba(255, 255, 255, 0.09);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 
     0 1px 2px rgba(0, 0, 0, 0.3),
-    0 20px 50px -15px rgba(0, 0, 0, 0.65),
+    0 24px 60px -15px rgba(0, 0, 0, 0.7),
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .editorial-card:hover {
-  border-color: rgba(228, 164, 149, 0.28);
-  box-shadow: 
-    0 1px 2px rgba(0, 0, 0, 0.35),
-    0 24px 60px -15px rgba(0, 0, 0, 0.75),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  border-color: rgba(228, 164, 149, 0.25);
 }
 
 .editorial-card-active {
-  background: rgba(24, 29, 48, 0.78);
+  background: rgba(24, 29, 48, 0.75);
   backdrop-filter: blur(32px) saturate(160%);
   -webkit-backdrop-filter: blur(32px) saturate(160%);
   border: 1px solid rgba(228, 164, 149, 0.5);
   box-shadow: 
     0 1px 2px rgba(0, 0, 0, 0.4),
     0 28px 70px -15px rgba(0, 0, 0, 0.8),
-    0 0 30px rgba(228, 164, 149, 0.15),
+    0 0 35px rgba(228, 164, 149, 0.18),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
-/* Frosted Capsule / Pill (Inspired by Image 1 Header & Search Capsule) */
+/* Open Drafting Canvas (Eliminates the "tiny island box") */
+.editorial-workspace {
+  background: rgba(13, 16, 28, 0.5);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  box-shadow: 
+    0 20px 50px -20px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+.editorial-workspace:focus-within {
+  border-color: rgba(228, 164, 149, 0.45);
+  box-shadow: 
+    0 20px 60px -15px rgba(0, 0, 0, 0.7),
+    0 0 25px rgba(228, 164, 149, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+/* Frosted Capsule / Pill */
 .frosted-capsule {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.04);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.09);
 }
 
 .frosted-capsule:hover {
@@ -71,13 +82,13 @@ body {
   border-color: rgba(255, 255, 255, 0.18);
 }
 
-/* Discrete architectural hairline */
+/* Architectural Hairline Divider */
 .editorial-divider {
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(228, 164, 149, 0.25) 25%, rgba(228, 164, 149, 0.25) 75%, transparent);
+  background: linear-gradient(90deg, transparent, rgba(228, 164, 149, 0.3) 25%, rgba(228, 164, 149, 0.3) 75%, transparent);
 }
 
-/* Minimalist scrollbar */
+/* Sleek Minimalist Scrollbar */
 ::-webkit-scrollbar {
   width: 5px;
   height: 5px;

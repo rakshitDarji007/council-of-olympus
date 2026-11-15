@@ -302,161 +302,159 @@ export default function App() {
   };
 
   return (
-    <div className="relative min-h-screen bg-[#07080D] p-2 sm:p-5 lg:p-6 flex flex-col justify-between selection:bg-[#E8A28E] selection:text-[#0A0C16]">
-      {/* Floating Viewport Canvas (Inspired by Image 1) */}
-      <div className="w-full max-w-7xl mx-auto flex-1 flex flex-col rounded-[28px] sm:rounded-[36px] dawn-ambient-canvas border border-white/[0.08] shadow-[0_30px_90px_-20px_rgba(0,0,0,0.85)] overflow-hidden relative">
-        <StarBackground />
+    <div className="relative min-h-screen flex flex-col justify-between selection:bg-[#E8A28E] selection:text-[#07080D]">
+      <StarBackground />
 
-        {/* TOP FROSTED APP BAR (Inspired by Image 1 & Hermes Agent) */}
-        <header className="relative z-40 w-full bg-black/25 backdrop-blur-xl border-b border-white/[0.08] px-5 sm:px-8 py-3.5 select-none">
-          <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
-            {/* Logo & Brand Title */}
-            <div
-              onClick={handleReset}
-              className="flex items-center gap-3 cursor-pointer group"
-            >
-              <div className="w-7 h-7 rounded-full frosted-capsule flex items-center justify-center text-[#E8A28E] font-serif font-bold text-xs shadow-sm">
-                Ω
-              </div>
-              <div className="flex items-center gap-2.5">
-                <h1 className="font-display text-xs sm:text-sm font-bold tracking-[0.2em] text-white uppercase group-hover:text-[#E8A28E] transition-colors">
-                  The Council of Olympus
-                </h1>
-                <span className="hidden lg:inline-block text-[10px] font-mono tracking-wider px-2.5 py-0.5 rounded-full frosted-capsule text-zinc-400">
-                  Tripartite Deliberation
-                </span>
-              </div>
+      {/* FULL-BLEED FROSTED HEADER (Inspired by Image 1 & Hermes Agent) */}
+      <header className="relative z-40 w-full bg-[#07080D]/40 backdrop-blur-2xl border-b border-white/[0.08] px-4 sm:px-8 py-4 select-none">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+          {/* Logo & Brand Title */}
+          <div
+            onClick={handleReset}
+            className="flex items-center gap-3 cursor-pointer group"
+          >
+            <div className="w-8 h-8 rounded-full frosted-capsule flex items-center justify-center text-[#E8A28E] font-serif font-bold text-sm shadow-sm">
+              Ω
             </div>
-
-            {/* Frosted Center Search/Context Capsule (Inspired by Image 1 Header) */}
-            <div className="hidden md:flex items-center gap-2 px-4 py-1.5 rounded-full frosted-capsule text-xs text-zinc-300">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#E8A28E] animate-pulse" />
-              <span className="font-sans text-[11px] text-zinc-300">
-                Adversarial AI Counsel • Athena • Poseidon • Hermes • Odysseus
+            <div className="flex items-center gap-2.5">
+              <span className="font-display text-sm sm:text-base font-bold tracking-[0.2em] text-white uppercase group-hover:text-[#E8A28E] transition-colors">
+                The Council of Olympus
+              </span>
+              <span className="hidden lg:inline-block text-[10px] font-mono tracking-wider px-2.5 py-0.5 rounded-full frosted-capsule text-zinc-400">
+                Homeric Decision Engine
               </span>
             </div>
+          </div>
 
-            {/* Actions & Utilities */}
-            <div className="flex items-center gap-2">
-              <button
-                onClick={handleLoadDemoDilemma}
-                title="Load sample dilemma"
-                className="px-4 py-1.5 rounded-full frosted-capsule text-zinc-200 hover:text-white text-xs font-sans font-medium transition flex items-center gap-1.5 hover:scale-[1.02]"
-              >
-                <Zap size={13} className="text-[#E8A28E]" />
-                <span className="hidden sm:inline">Sample Scenario</span>
-              </button>
+          {/* Frosted Center Search/Context Capsule (Inspired by Image 1 Header) */}
+          <div className="hidden md:flex items-center gap-2.5 px-4 py-1.5 rounded-full frosted-capsule text-xs text-zinc-300">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#E8A28E] animate-pulse" />
+            <span className="font-sans text-[11px] text-zinc-300 font-medium">
+              Athena (Strategy) • Poseidon (Downside) • Hermes (Agility) • Odysseus (Ruling)
+            </span>
+          </div>
 
-              <button
-                onClick={toggleMute}
-                title={isMuted ? 'Unmute Audio' : 'Mute Audio'}
-                className={`p-2 rounded-full border transition ${
-                  isMuted
-                    ? 'bg-rose-950/50 text-rose-300 border-rose-500/40'
-                    : 'frosted-capsule text-zinc-400 hover:text-white'
-                }`}
-              >
-                {isMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
-              </button>
+          {/* Actions & Utilities */}
+          <div className="flex items-center gap-2.5">
+            <button
+              onClick={handleLoadDemoDilemma}
+              title="Load sample scenario"
+              className="px-4 py-1.5 rounded-full frosted-capsule text-zinc-200 hover:text-white text-xs font-sans font-medium transition flex items-center gap-1.5 hover:scale-[1.02]"
+            >
+              <Zap size={13} className="text-[#E8A28E]" />
+              <span className="hidden sm:inline">Sample Dilemma</span>
+            </button>
 
-              <button
-                onClick={() => setIsDebugOpen(true)}
-                title="Telemetry & Logs"
-                className="p-2 rounded-full frosted-capsule text-zinc-400 hover:text-white transition"
-              >
-                <Terminal size={14} />
-              </button>
+            <button
+              onClick={toggleMute}
+              title={isMuted ? 'Unmute Audio' : 'Mute Audio'}
+              className={`p-2 rounded-full border transition ${
+                isMuted
+                  ? 'bg-rose-950/50 text-rose-300 border-rose-500/40'
+                  : 'frosted-capsule text-zinc-400 hover:text-white'
+              }`}
+            >
+              {isMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
+            </button>
 
-              <button
-                onClick={() => setIsSettingsOpen(true)}
-                title="Settings"
-                className="p-2 rounded-full frosted-capsule text-zinc-400 hover:text-white transition"
-              >
-                <Settings size={14} />
-              </button>
+            <button
+              onClick={() => setIsDebugOpen(true)}
+              title="Telemetry & Logs"
+              className="p-2 rounded-full frosted-capsule text-zinc-400 hover:text-white transition"
+            >
+              <Terminal size={15} />
+            </button>
+
+            <button
+              onClick={() => setIsSettingsOpen(true)}
+              title="Settings"
+              className="p-2 rounded-full frosted-capsule text-zinc-400 hover:text-white transition"
+            >
+              <Settings size={15} />
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* MAIN VIEWPORT (Expansive & Open, No Island Box) */}
+      <main className="relative z-20 flex-1 flex flex-col justify-center py-8 sm:py-14 px-4 sm:px-6">
+        {/* Loading Modal */}
+        {isLoading && (
+          <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/75 backdrop-blur-xl select-none animate-fade-in">
+            <div className="editorial-card p-6 sm:p-8 rounded-3xl max-w-sm text-center shadow-2xl">
+              <div className="w-8 h-8 mx-auto mb-4 border-2 border-[#E8A28E] border-t-transparent rounded-full animate-spin" />
+              <h3 className="font-heading text-lg font-normal text-white mb-1">
+                The Council Deliberates
+              </h3>
+              <p className="text-xs font-sans text-zinc-400">
+                {loadingText}
+              </p>
             </div>
           </div>
-        </header>
+        )}
 
-        {/* MAIN VIEWPORT */}
-        <main className="relative z-20 flex-1 flex flex-col justify-center py-6 sm:py-10">
-          {/* Loading Modal */}
-          {isLoading && (
-            <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/75 backdrop-blur-xl select-none animate-fade-in">
-              <div className="editorial-card p-6 sm:p-8 rounded-3xl max-w-sm text-center shadow-2xl">
-                <div className="w-8 h-8 mx-auto mb-4 border-2 border-[#E8A28E] border-t-transparent rounded-full animate-spin" />
-                <h3 className="font-heading text-lg font-normal text-white mb-1">
-                  The Council Deliberates
-                </h3>
-                <p className="text-xs font-sans text-zinc-400">
-                  {loadingText}
-                </p>
-              </div>
-            </div>
-          )}
+        {/* STAGE 1: INTAKE */}
+        {currentStage === STAGES.INTAKE && (
+          <IntakeOracle
+            dilemma={dilemma}
+            conversation={conversation}
+            currentQuestion={currentOracleQuestion}
+            isWaiting={isLoading}
+            isRecording={isRecording}
+            emergencyData={emergencyData}
+            onSubmitDilemma={handleSubmitDilemma}
+            onSubmitAnswer={handleSubmitAnswer}
+            onProceedToCouncil={handleProceedToCouncilDirect}
+            onStartVoiceInput={() => {
+              setSpeechTargetCallback(() => {});
+              startRecording();
+            }}
+            onStopVoiceInput={stopRecording}
+            onSelectSampleDilemma={(text) => handleSubmitDilemma(text)}
+          />
+        )}
 
-          {/* STAGE 1: INTAKE */}
-          {currentStage === STAGES.INTAKE && (
-            <IntakeOracle
-              dilemma={dilemma}
-              conversation={conversation}
-              currentQuestion={currentOracleQuestion}
-              isWaiting={isLoading}
-              isRecording={isRecording}
-              emergencyData={emergencyData}
-              onSubmitDilemma={handleSubmitDilemma}
-              onSubmitAnswer={handleSubmitAnswer}
-              onProceedToCouncil={handleProceedToCouncilDirect}
-              onStartVoiceInput={() => {
-                setSpeechTargetCallback(() => {});
-                startRecording();
-              }}
-              onStopVoiceInput={stopRecording}
-              onSelectSampleDilemma={(text) => handleSubmitDilemma(text)}
+        {/* STAGE 2: COUNCIL DEBATE */}
+        {currentStage === STAGES.DEBATE && (
+          <div className="w-full max-w-6xl mx-auto flex flex-col gap-8 sm:gap-10">
+            <CouncilStage
+              currentSpeaker={currentTurn?.speaker || 'athena'}
+              turns={turns}
+              currentTurnIndex={currentTurnIndex}
+              debateDynamic={debateDynamic}
+              onChallengeGod={handleChallengeGod}
+              isChallenging={isChallenging}
             />
-          )}
 
-          {/* STAGE 2: COUNCIL DEBATE */}
-          {currentStage === STAGES.DEBATE && (
-            <div className="w-full flex flex-col gap-6 sm:gap-8">
-              <CouncilStage
-                currentSpeaker={currentTurn?.speaker || 'athena'}
-                turns={turns}
-                currentTurnIndex={currentTurnIndex}
-                debateDynamic={debateDynamic}
-                onChallengeGod={handleChallengeGod}
-                isChallenging={isChallenging}
-              />
-
-              <SubtitleBar
-                currentTurn={currentTurn}
-                turnIndex={currentTurnIndex}
-                totalTurns={turns.length}
-                isPlaying={isPlaying}
-                isMuted={isMuted}
-                onToggleMute={toggleMute}
-                onNextTurn={skipNext}
-                onSkipToVerdict={handleFetchVerdict}
-                onOpenInterject={() => setIsInterjectOpen(true)}
-                onTogglePlayPause={togglePlayPause}
-                isGenerating={isLoading}
-              />
-            </div>
-          )}
-
-          {/* STAGE 3: ODYSSEUS' VERDICT */}
-          {currentStage === STAGES.VERDICT && (
-            <OdysseusVerdict
-              verdict={verdict}
-              dilemma={dilemma}
-              onReset={handleReset}
-              onReplayDebate={handleReplayDebate}
+            <SubtitleBar
+              currentTurn={currentTurn}
+              turnIndex={currentTurnIndex}
+              totalTurns={turns.length}
+              isPlaying={isPlaying}
+              isMuted={isMuted}
+              onToggleMute={toggleMute}
+              onNextTurn={skipNext}
+              onSkipToVerdict={handleFetchVerdict}
+              onOpenInterject={() => setIsInterjectOpen(true)}
+              onTogglePlayPause={togglePlayPause}
+              isGenerating={isLoading}
             />
-          )}
-        </main>
+          </div>
+        )}
 
-        <WaveFooter isLoading={isLoading} />
-      </div>
+        {/* STAGE 3: ODYSSEUS' VERDICT */}
+        {currentStage === STAGES.VERDICT && (
+          <OdysseusVerdict
+            verdict={verdict}
+            dilemma={dilemma}
+            onReset={handleReset}
+            onReplayDebate={handleReplayDebate}
+          />
+        )}
+      </main>
+
+      {/* FULL-BLEED FOOTER */}
+      <WaveFooter isLoading={isLoading} />
 
       {/* MODALS */}
       <InterjectionModal
