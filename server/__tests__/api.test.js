@@ -35,7 +35,7 @@ test('GET /api/demo returns demo dilemma and alternatives', async () => {
   assert.equal(res.status, 200);
   const data = await res.json();
   assert.ok(data.demo);
-  assert.equal(data.demo.turns.length, 6);
+  assert.ok(data.demo.turns.length >= 3 && data.demo.turns.length <= 4);
   assert.ok(data.demo.verdict);
   assert.ok(Array.isArray(data.alternates));
 });
@@ -114,7 +114,7 @@ test('POST /api/debate returns structured turns for Athena, Poseidon, Hermes', a
   assert.equal(res.status, 200);
   const data = await res.json();
   assert.ok(Array.isArray(data.turns));
-  assert.ok(data.turns.length >= 6);
+  assert.ok(data.turns.length >= 3 && data.turns.length <= 4);
   const speakers = data.turns.map((t) => t.speaker);
   assert.ok(speakers.includes('athena'));
   assert.ok(speakers.includes('poseidon'));
@@ -159,7 +159,7 @@ test('POST /api/bluff returns god defense', async () => {
   assert.ok(data.text);
 });
 
-test('POST /api/tts handles missing key gracefully with fallback flag', async () => {
+test('POST /api/tts returns audio or handles fallback gracefully', async () => {
   const res = await fetch(`${baseUrl}/api/tts`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -169,9 +169,14 @@ test('POST /api/tts handles missing key gracefully with fallback flag', async ()
     }),
   });
   assert.equal(res.status, 200);
-  // Without ELEVENLABS_API_KEY, should return fallback JSON
-  const data = await res.json();
-  assert.ok(data.fallback === true || res.headers.get('content-type')?.includes('audio'));
+  const contentType = res.headers.get('content-type') || '';
+  if (contentType.includes('audio')) {
+    const arrayBuffer = await res.arrayBuffer();
+    assert.ok(arrayBuffer.byteLength > 0);
+  } else {
+    const data = await res.json();
+    assert.ok(data.fallback === true);
+  }
 });
 
 test('Deterministic audio hash helper works as expected', () => {

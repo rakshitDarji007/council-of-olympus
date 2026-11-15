@@ -329,7 +329,7 @@ The gods MUST directly acknowledge and react to this interjection in their upcom
     : ''
 }
 
-Generate the debate turns following the prompt rules. Exactly 6 turns total (Athena -> Poseidon -> Hermes -> Athena -> Poseidon -> Hermes), each under 40 words, punchy, addressing each other by name.
+Generate only as many debate turns as needed (typically 3 turns: Athena -> Poseidon -> Hermes, at most 4). Total spoken dialogue across all turns combined MUST NOT EXCEED 30 SECONDS (under 70 words total). Each turn must be exactly 1 razor-sharp sentence under 20 words.
   `.trim();
 
   const schema = {
@@ -374,42 +374,21 @@ Generate the debate turns following the prompt rules. Exactly 6 turns total (Ath
             speaker: 'athena',
             addressed_to: 'mortal',
             stance: 'conditional',
-            text: 'If it fits your budget and energizes your day, an occasional culinary reward is strategic. Just ensure it is a conscious treat rather than an unthinking routine.',
+            text: 'If it fits your budget and energizes your afternoon, an occasional culinary reward is smart strategy.',
           },
           {
             round: 1,
             speaker: 'poseidon',
             addressed_to: 'athena',
             stance: 'against',
-            text: 'Athena justifies every luxury with philosophy! Small leaks sink ships over twelve months. If a modest meal satisfies your hunger, pocket the difference.',
+            text: 'Small leaks sink ships, Athena; if modest food satisfies your hunger, pocket the savings instead.',
           },
           {
             round: 1,
             speaker: 'hermes',
             addressed_to: 'poseidon',
             stance: 'for',
-            text: 'You are hungry now, it is well within your budget, and you explicitly do not mind the extra cost. Buy the meal, enjoy the lunch, and get on with your day!',
-          },
-          {
-            round: 2,
-            speaker: 'athena',
-            addressed_to: 'hermes',
-            stance: 'for',
-            text: 'Hermes is right on utility. Good nourishment directly fuels your focus and morale. Since the downside is zero, enjoy the good food.',
-          },
-          {
-            round: 2,
-            speaker: 'poseidon',
-            addressed_to: 'mortal',
-            stance: 'conditional',
-            text: 'Go eat, then! But keep an eye on your monthly ledger so occasional treats do not become an expensive habit.',
-          },
-          {
-            round: 2,
-            speaker: 'hermes',
-            addressed_to: 'mortal',
-            stance: 'for',
-            text: 'Council settled! Go enjoy the restaurant, recharge your energy, and savor every bite.',
+            text: 'Skip the false crisis, Poseidon: buy the meal, recharge your energy, and get back to building.',
           },
         ],
         debate_dynamic: 'Athena balances budget vs morale; Poseidon cautions against spending creep; Hermes favors immediate utility.',
@@ -431,42 +410,21 @@ Generate the debate turns following the prompt rules. Exactly 6 turns total (Ath
           speaker: 'athena',
           addressed_to: 'mortal',
           stance: 'conditional',
-          text: `Look five years out. A hasty pivot out of short-term frustration destroys compounding leverage. Don't abandon your technical or career footing; steer it toward your deeper strengths.`,
+          text: 'Look five years ahead: do not trade compounding career leverage for temporary relief.',
         },
         {
           round: 1,
           speaker: 'poseidon',
           addressed_to: 'athena',
           stance: 'against',
-          text: `Athena preaches five-year ideals, but you have real rent, debt, and runway to protect. If you walk away from stability without cash flow, you'll regret the fallout. Protect your downside first.`,
+          text: 'Theories do not pay your bills, Athena; protect your runway and downside before chasing fantasies.',
         },
         {
           round: 1,
           speaker: 'hermes',
           addressed_to: 'poseidon',
           stance: 'conditional',
-          text: `Why treat this like a trap with only two doors? Run a 30-day pilot: keep your day-to-day footing, test the new path in evenings, and get real data before committing.`,
-        },
-        {
-          round: 2,
-          speaker: 'athena',
-          addressed_to: 'hermes',
-          stance: 'for',
-          text: `Hermes is right on testing. Run a disciplined reconnaissance, but don't use moderation as an excuse for indecision. Test with purpose, then commit.`,
-        },
-        {
-          round: 2,
-          speaker: 'poseidon',
-          addressed_to: 'athena',
-          stance: 'against',
-          text: `Testing is fine, but set a hard financial ceiling. If your side experiment bleeds your core focus or savings, cut it loose. Hope is not an operational strategy.`,
-        },
-        {
-          round: 2,
-          speaker: 'hermes',
-          addressed_to: 'mortal',
-          stance: 'conditional',
-          text: `Exactly. Set a 90-day checkpoint. If you get real traction, scale up; if not, you pivot back with zero permanent damage. Keep your options open.`,
+          text: 'Why choose all-or-nothing? Run a low-risk 30-day trial without burning your existing bridges.',
         },
       ],
       debate_dynamic: 'Athena emphasizes multi-year compounding; Poseidon stresses runway and financial defense; Hermes designs a low-friction pilot.',

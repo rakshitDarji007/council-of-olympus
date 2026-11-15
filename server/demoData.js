@@ -28,42 +28,21 @@ export const DEMO_DILEMMA = {
       speaker: "athena",
       addressed_to: "mortal",
       stance: "conditional",
-      text: "Look five years down the road. Throwing away a technical foundation out of temporary burnout destroys compounding leverage. Keep your technical core, but steer it toward ethics and writing."
+      text: "Look five years ahead: discarding your technical foundation out of burnout destroys compounding leverage, so preserve your core."
     },
     {
       round: 1,
       speaker: "poseidon",
       addressed_to: "athena",
       stance: "against",
-      text: "Athena loves five-year theories, but you have fifteen grand in debt and your parents are paying tuition. Walk away from CS now, and your financial harbor slams shut. Don't romanticize getting shipwrecked."
+      text: "Theories do not pay student debt, Athena; protect your financial runway before chasing an untested passion."
     },
     {
       round: 1,
       speaker: "hermes",
       addressed_to: "poseidon",
       stance: "conditional",
-      text: "You two are treating this like an all-or-nothing trap. Keep CS on paper, declare a philosophy minor, and write on weekends. Test the waters before making an irreversible jump."
-    },
-    {
-      round: 2,
-      speaker: "athena",
-      addressed_to: "hermes",
-      stance: "for",
-      text: "Hermes is right on strategy. The highest leverage doesn't come from abandoning the machine; it comes from marrying software with deep human judgment. A dual focus makes you indispensable."
-    },
-    {
-      round: 2,
-      speaker: "poseidon",
-      addressed_to: "athena",
-      stance: "against",
-      text: "A dual focus is twice the weight in rough water. If core algorithms are already draining you, extra essay deadlines will break your back. Guard your GPA before taking on more cargo."
-    },
-    {
-      round: 2,
-      speaker: "hermes",
-      addressed_to: "mortal",
-      stance: "conditional",
-      text: "Run a one-semester experiment. Talk to your advisor this week, take one tech ethics seminar, and build a writing portfolio. Give yourself data before making any irreversible declaration."
+      text: "Why choose all-or-nothing? Declare a philosophy minor this semester, test the waters, and keep your options wide open."
     }
   ],
   debate_dynamic: "Athena advises long-term technical leverage; Poseidon warns of debt and parental friction; Hermes designs an agile low-risk trial.",

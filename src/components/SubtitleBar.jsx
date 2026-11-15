@@ -4,7 +4,7 @@ import { Volume2, VolumeX, SkipForward, FastForward, MessageSquare, Pause, Play 
 export default function SubtitleBar({
   currentTurn,
   turnIndex = 0,
-  totalTurns = 6,
+  totalTurns = 3,
   isPlaying = false,
   isMuted = false,
   onToggleMute,
