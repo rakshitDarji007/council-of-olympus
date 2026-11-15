@@ -35,7 +35,8 @@ export const DEMO_DILEMMA = {
       speaker: "poseidon",
       addressed_to: "athena",
       stance: "against",
-      text: "That is pure delusion, Athena! You expect them to ignore fifteen grand in debt while chasing an untested writing dream?"
+      text: "That is pure delusion, Athena! You expect them to ignore fifteen grand in debt while chasing an untested writing dream?",
+      is_interruption: true
     },
     {
       round: 1,

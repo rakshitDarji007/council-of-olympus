@@ -196,6 +196,170 @@ body {
   box-shadow: 0 16px 45px rgba(16, 47, 70, 0.35), 0 0 24px rgba(232, 201, 122, 0.25);
 }
 
+/* ==========================================================================
+   COUNCIL ORBITAL STAGE & BACKLIGHT SIGN AURA ANIMATIONS
+   ========================================================================== */
+
+:root {
+  --orbit-x: clamp(140px, 24vw, 250px);
+  --orbit-y: clamp(130px, 18vw, 175px);
+}
+
+/* Backlight Sign Aura Pulsing Glow */
+@keyframes backlightSignPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.85;
+    filter: blur(28px) brightness(1.15);
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 1;
+    filter: blur(40px) brightness(1.35);
+  }
+}
+
+/* Backlight Aura Variants per God */
+.backlight-aura-athena {
+  background: radial-gradient(circle at 50% 35%, rgba(232, 201, 122, 0.85) 0%, rgba(148, 180, 159, 0.5) 45%, transparent 75%);
+  box-shadow: 0 0 50px rgba(232, 201, 122, 0.65), 0 0 110px rgba(148, 180, 159, 0.4), 0 0 160px rgba(232, 201, 122, 0.2);
+}
+
+.backlight-aura-poseidon {
+  background: radial-gradient(circle at 50% 35%, rgba(74, 144, 188, 0.9) 0%, rgba(48, 88, 115, 0.55) 45%, transparent 75%);
+  box-shadow: 0 0 50px rgba(74, 144, 188, 0.75), 0 0 110px rgba(48, 88, 115, 0.45), 0 0 160px rgba(74, 144, 188, 0.25);
+}
+
+.backlight-aura-hermes {
+  background: radial-gradient(circle at 50% 35%, rgba(212, 114, 87, 0.9) 0%, rgba(232, 201, 122, 0.5) 45%, transparent 75%);
+  box-shadow: 0 0 50px rgba(212, 114, 87, 0.8), 0 0 110px rgba(232, 201, 122, 0.45), 0 0 160px rgba(212, 114, 87, 0.25);
+}
+
+/* Interruption Shockwave / Straight-Up Aura Flash */
+@keyframes interruptionShockwave {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translateY(120px);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(1.15) translateY(20px);
+    filter: brightness(2) drop-shadow(0 0 50px #f6eddf);
+  }
+  100% {
+    opacity: 0.9;
+    transform: scale(1) translateY(0);
+    filter: brightness(1.2);
+  }
+}
+
+/* Circular Orbit Keyframes:
+   1. Bottom-Right -> Loops up to Top Apex
+   2. Top Apex -> Loops down in a circle to Bottom-Left
+   3. Bottom-Left -> Loops across the bottom to Bottom-Right
+*/
+@keyframes loopBottomRightToTop {
+  0% {
+    transform: translate(calc(-50% + var(--orbit-x)), var(--orbit-y)) scale(0.88);
+    opacity: 0.75;
+  }
+  45% {
+    transform: translate(calc(-50% + (var(--orbit-x) * 0.75)), calc(var(--orbit-y) * 0.35)) scale(0.98);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(-50%, 0px) scale(1.08);
+    opacity: 1;
+  }
+}
+
+@keyframes loopTopToBottomLeft {
+  0% {
+    transform: translate(-50%, 0px) scale(1.08);
+    opacity: 1;
+  }
+  45% {
+    transform: translate(calc(-50% - (var(--orbit-x) * 0.75)), calc(var(--orbit-y) * 0.35)) scale(0.96);
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate(calc(-50% - var(--orbit-x)), var(--orbit-y)) scale(0.88);
+    opacity: 0.75;
+  }
+}
+
+@keyframes loopBottomLeftToBottomRight {
+  0% {
+    transform: translate(calc(-50% - var(--orbit-x)), var(--orbit-y)) scale(0.88);
+    opacity: 0.75;
+  }
+  50% {
+    transform: translate(-50%, calc(var(--orbit-y) * 1.18)) scale(0.84);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translate(calc(-50% + var(--orbit-x)), var(--orbit-y)) scale(0.88);
+    opacity: 0.75;
+  }
+}
+
+/* Interruption: Straight Up Along Vertical Axis (No Circle) */
+@keyframes straightUpInterruption {
+  0% {
+    transform: translate(-50%, calc(var(--orbit-y) + 70px)) scale(0.82);
+    opacity: 0.5;
+    filter: brightness(2) drop-shadow(0 0 35px #e8c97a);
+  }
+  40% {
+    transform: translate(-50%, calc(var(--orbit-y) * 0.35)) scale(1.04);
+    filter: brightness(2.2) drop-shadow(0 0 60px #f6eddf);
+  }
+  100% {
+    transform: translate(-50%, 0px) scale(1.08);
+    opacity: 1;
+    filter: brightness(1);
+  }
+}
+
+/* Orbit Positioning & Animation Helpers */
+.orbit-slot-top {
+  transform: translate(-50%, 0px) scale(1.08);
+  z-index: 30;
+  opacity: 1;
+}
+
+.orbit-slot-bottom-right {
+  transform: translate(calc(-50% + var(--orbit-x)), var(--orbit-y)) scale(0.88);
+  z-index: 10;
+  opacity: 0.75;
+}
+
+.orbit-slot-bottom-left {
+  transform: translate(calc(-50% - var(--orbit-x)), var(--orbit-y)) scale(0.88);
+  z-index: 10;
+  opacity: 0.75;
+}
+
+.anim-loop-br-to-top {
+  animation: loopBottomRightToTop 0.85s cubic-bezier(0.34, 1.25, 0.64, 1) forwards;
+  z-index: 30;
+}
+
+.anim-loop-top-to-bl {
+  animation: loopTopToBottomLeft 0.85s cubic-bezier(0.34, 1.25, 0.64, 1) forwards;
+  z-index: 10;
+}
+
+.anim-loop-bl-to-br {
+  animation: loopBottomLeftToBottomRight 0.85s cubic-bezier(0.34, 1.25, 0.64, 1) forwards;
+  z-index: 10;
+}
+
+.anim-straight-up {
+  animation: straightUpInterruption 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  z-index: 35;
+}
+
 /* Architectural Hairline Divider */
 .odyssey-divider {
   height: 1px;

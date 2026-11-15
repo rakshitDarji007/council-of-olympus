@@ -345,6 +345,7 @@ Generate an intense, fast-paced argument of 4 to 5 turns. The gods must interrup
             addressed_to: { type: 'STRING', enum: ['mortal', 'athena', 'poseidon', 'hermes'] },
             stance: { type: 'STRING', enum: ['for', 'against', 'conditional'] },
             text: { type: 'STRING' },
+            is_interruption: { type: 'BOOLEAN', nullable: true },
           },
           required: ['round', 'speaker', 'addressed_to', 'stance', 'text'],
         },

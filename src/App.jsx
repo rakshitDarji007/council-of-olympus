@@ -232,7 +232,10 @@ export default function App() {
       });
 
       if (newDebate.turns && newDebate.turns.length > 0) {
-        setTurns(newDebate.turns);
+        const turnsWithInterruption = newDebate.turns.map((t, i) =>
+          i === 0 ? { ...t, is_interruption: true } : t
+        );
+        setTurns(turnsWithInterruption);
         setDebateDynamic(newDebate.debate_dynamic || 'The council reacts to mortal interjection.');
       }
     } catch (err) {
@@ -265,6 +268,7 @@ export default function App() {
           addressed_to: 'mortal',
           stance: lastGodTurn.stance || 'conditional',
           text: `[Challenged]: ${bluffRes.defense}`,
+          is_interruption: true,
         };
         setTurns((prev) => [...prev, defenseTurn]);
       }
@@ -430,6 +434,7 @@ export default function App() {
               currentSpeaker={currentTurn?.speaker || 'athena'}
               turns={turns}
               currentTurnIndex={currentTurnIndex}
+              currentTurn={currentTurn}
               debateDynamic={debateDynamic}
               onChallengeGod={handleChallengeGod}
               isChallenging={isChallenging}

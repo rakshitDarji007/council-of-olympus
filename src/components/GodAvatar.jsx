@@ -16,6 +16,18 @@ export default function GodAvatar({
 }) {
   const normalized = speaker.toLowerCase();
 
+  const activeShadowByGod = {
+    athena: '0 0 30px rgba(232, 201, 122, 0.65), 0 0 60px rgba(148, 180, 159, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
+    poseidon: '0 0 30px rgba(74, 144, 188, 0.75), 0 0 60px rgba(48, 88, 115, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
+    hermes: '0 0 30px rgba(212, 114, 87, 0.75), 0 0 60px rgba(232, 201, 122, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
+  };
+
+  const activeBorderByGod = {
+    athena: '2px solid #e8c97a',
+    poseidon: '2px solid #4a90bc',
+    hermes: '2px solid #d47257',
+  };
+
   return (
     <div
       className={`relative rounded-full flex items-center justify-center transition-all duration-300 overflow-hidden ${className}`}
@@ -23,9 +35,11 @@ export default function GodAvatar({
         width: `${size}px`,
         height: `${size}px`,
         background: 'linear-gradient(145deg, #102f46 0%, #041321 100%)',
-        border: isActive ? '2px solid #e8c97a' : '1px solid rgba(222, 208, 188, 0.25)',
+        border: isActive
+          ? (activeBorderByGod[normalized] || '2px solid #e8c97a')
+          : '1px solid rgba(222, 208, 188, 0.25)',
         boxShadow: isActive
-          ? '0 0 24px rgba(232, 201, 122, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+          ? (activeShadowByGod[normalized] || '0 0 28px rgba(232, 201, 122, 0.6)')
           : '0 4px 14px rgba(4, 19, 33, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.08)',
       }}
     >
