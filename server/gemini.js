@@ -374,24 +374,24 @@ Generate only as many debate turns as needed (typically 3 turns: Athena -> Posei
             speaker: 'athena',
             addressed_to: 'mortal',
             stance: 'conditional',
-            text: 'If it fits your budget and energizes your afternoon, an occasional culinary reward is smart strategy.',
+            text: 'Mortal, nourishing your strength with a deliberate feast is strategic wisdom, provided your coffers permit it!',
           },
           {
             round: 1,
             speaker: 'poseidon',
             addressed_to: 'athena',
             stance: 'against',
-            text: 'Small leaks sink ships, Athena; if modest food satisfies your hunger, pocket the savings instead.',
+            text: 'Athena gilds self-indulgence with philosophy! Small leaks sink mighty fleets; satisfy your hunger simply and guard your coin.',
           },
           {
             round: 1,
             speaker: 'hermes',
             addressed_to: 'poseidon',
             stance: 'for',
-            text: 'Skip the false crisis, Poseidon: buy the meal, recharge your energy, and get back to building.',
+            text: 'Spare us the tempest, Neptune! Feast, replenish your vital fire, and let tomorrow worry about itself.',
           },
         ],
-        debate_dynamic: 'Athena balances budget vs morale; Poseidon cautions against spending creep; Hermes favors immediate utility.',
+        debate_dynamic: 'Athena justifies conscious nourishment; Poseidon bellows against luxury leaks; Hermes urges swift mortal indulgence.',
       };
     }
 
@@ -410,24 +410,24 @@ Generate only as many debate turns as needed (typically 3 turns: Athena -> Posei
           speaker: 'athena',
           addressed_to: 'mortal',
           stance: 'conditional',
-          text: 'Look five years ahead: do not trade compounding career leverage for temporary relief.',
+          text: 'Mortal, look across decades: abandoning hard-won leverage for momentary comfort is the folly of fools!',
         },
         {
           round: 1,
           speaker: 'poseidon',
           addressed_to: 'athena',
           stance: 'against',
-          text: 'Theories do not pay your bills, Athena; protect your runway and downside before chasing fantasies.',
+          text: 'Your grand tapestries will not feed you, Athena! The abyss claims those who abandon safe harbor for unproven mirages.',
         },
         {
           round: 1,
           speaker: 'hermes',
           addressed_to: 'poseidon',
           stance: 'conditional',
-          text: 'Why choose all-or-nothing? Run a low-risk 30-day trial without burning your existing bridges.',
+          text: 'Must mortals always choose between drowning and stone? Take the sly middle road with a cunning thirty-day trial!',
         },
       ],
-      debate_dynamic: 'Athena emphasizes multi-year compounding; Poseidon stresses runway and financial defense; Hermes designs a low-friction pilot.',
+      debate_dynamic: 'Athena commands long-term imperial focus; Poseidon warns of ruinous waters; Hermes opens a cunning middle gate.',
     };
   }
 }

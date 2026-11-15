@@ -28,36 +28,36 @@ export const CHARACTER_VOICES = {
   oracle: process.env.ELEVENLABS_VOICE_ORACLE || 'MF3mGyEYCl7XYWbV9V6O',
 };
 
-// Adaptive voice settings per persona to give human-like pacing and dynamic inflections
+// Dramatic, expressive voice settings per deity persona (Roman/Olympian theatrical delivery)
 export const VOICE_SETTINGS_BY_CHARACTER = {
   athena: {
-    stability: 0.44, // Moderate stability for clear, intellectual, and deliberate rhythm
-    similarity_boost: 0.80,
-    style: 0.35,
+    stability: 0.38, // Measured yet dynamic authority; commanding and regal
+    similarity_boost: 0.85,
+    style: 0.55, // Strong intellectual gravitas, clear imperial cadence
     use_speaker_boost: true,
   },
   poseidon: {
-    stability: 0.28, // Low stability allows dramatic cadence shifts, gravel, and raw emotion
-    similarity_boost: 0.78,
-    style: 0.58, // High style for booming, textured human presence
+    stability: 0.20, // High turbulence; allows roaring vocal power, gravel, and cadence drops
+    similarity_boost: 0.82,
+    style: 0.75, // Maximum theatrical thunder and oceanic fury
     use_speaker_boost: true,
   },
   hermes: {
-    stability: 0.32, // Low stability for fast, dynamic, agile conversational pacing
-    similarity_boost: 0.75,
-    style: 0.46,
+    stability: 0.26, // Mercurial speed; quick, playful, sharp inflections
+    similarity_boost: 0.78,
+    style: 0.62, // Theatrical wit, energetic rhythm, and silver-tongued persuasion
     use_speaker_boost: true,
   },
   odysseus: {
-    stability: 0.50, // Measured, authoritative, seasoned cadence
-    similarity_boost: 0.80,
-    style: 0.30,
+    stability: 0.45, // Seasoned, resolute commander; battle-tested weight
+    similarity_boost: 0.85,
+    style: 0.48, // Solemn gravitas with clear, decisive conviction
     use_speaker_boost: true,
   },
   oracle: {
-    stability: 0.46,
+    stability: 0.42,
     similarity_boost: 0.80,
-    style: 0.25,
+    style: 0.40,
     use_speaker_boost: true,
   },
 };

@@ -28,21 +28,21 @@ export const DEMO_DILEMMA = {
       speaker: "athena",
       addressed_to: "mortal",
       stance: "conditional",
-      text: "Look five years ahead: discarding your technical foundation out of burnout destroys compounding leverage, so preserve your core."
+      text: "Mortal! Do not discard your hard-forged technical armor out of temporary weariness; true dominion requires enduring discipline!"
     },
     {
       round: 1,
       speaker: "poseidon",
       addressed_to: "athena",
       stance: "against",
-      text: "Theories do not pay student debt, Athena; protect your financial runway before chasing an untested passion."
+      text: "Your philosophical theories will not pay fifteen grand in debt, Athena; protect your harbor before chasing phantom tides!"
     },
     {
       round: 1,
       speaker: "hermes",
       addressed_to: "poseidon",
       stance: "conditional",
-      text: "Why choose all-or-nothing? Declare a philosophy minor this semester, test the waters, and keep your options wide open."
+      text: "Why drown in Neptune's squall or freeze in Athena's decree? Declare a minor, test the waters, and keep your doors open!"
     }
   ],
   debate_dynamic: "Athena advises long-term technical leverage; Poseidon warns of debt and parental friction; Hermes designs an agile low-risk trial.",
