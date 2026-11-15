@@ -63,14 +63,14 @@ export default function GodPodium({
 
   return (
     <div
-      className={`absolute top-4 left-1/2 flex flex-col justify-between rounded-3xl p-5 sm:p-6 select-none transition-all duration-500 ${slotClass} ${
+      className={`absolute top-4 left-1/2 flex flex-col justify-between rounded-3xl p-5 sm:p-6 select-none transition-[opacity,box-shadow,border-color] duration-500 will-change-transform ${slotClass} ${
         isActive
           ? 'odyssey-night-card-active shadow-[0_16px_40px_rgba(4,19,33,0.55)]'
-          : 'odyssey-night-card hover:opacity-100 hover:border-[#ded0bc]/40'
+          : 'odyssey-night-card hover:opacity-95 hover:border-[#ded0bc]/40'
       }`}
       style={{
-        width: 'clamp(270px, 80vw, 310px)',
-        minHeight: '380px',
+        width: 'clamp(265px, 28vw, 305px)',
+        minHeight: '375px',
       }}
     >
       {/* ====================================================================

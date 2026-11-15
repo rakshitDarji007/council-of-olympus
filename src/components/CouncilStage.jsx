@@ -39,7 +39,10 @@ export default function CouncilStage({
   const [activeInterruption, setActiveInterruption] = useState(false);
   const prevSpeakerRef = useRef(normCurrent);
   const prevTurnIndexRef = useRef(currentTurnIndex);
+  const slotsRef = useRef(slots);
   const animTimeoutRef = useRef(null);
+
+  slotsRef.current = slots;
 
   // Check if current turn is flagged as an interruption
   const isTurnInterruption = Boolean(
@@ -65,39 +68,60 @@ export default function CouncilStage({
     const isInterruption = isTurnInterruption || isChallenging;
     setActiveInterruption(isInterruption);
 
-    // Identify who moves where:
-    // 1. Current speaker must occupy 'TOP'
-    // 2. Previous speaker (who was at 'TOP') loops down to 'BOTTOM_LEFT'
-    // 3. The remaining god moves to 'BOTTOM_RIGHT'
-    const newTop = normCurrent;
-    const newBottomLeft = prevSpeaker !== newTop ? prevSpeaker : GODS.find((g) => g !== newTop);
-    const newBottomRight = GODS.find((g) => g !== newTop && g !== newBottomLeft);
+    const currentSlots = slotsRef.current;
 
-    const newSlots = {
-      [newTop]: 'TOP',
-      [newBottomLeft]: 'BOTTOM_LEFT',
-      [newBottomRight]: 'BOTTOM_RIGHT',
-    };
-    setSlots(newSlots);
-
-    // Apply animation classes:
-    if (isInterruption) {
-      // Interruption: Shoots STRAIGHT UP vertically through center (no circle)
-      setAnimClasses({
-        [newTop]: 'anim-straight-up',
-        [newBottomLeft]: 'anim-loop-top-to-bl',
-        [newBottomRight]: 'anim-loop-bl-to-br',
-      });
-    } else {
-      // Normal turn: Circular loop back down and up along the ring
-      setAnimClasses({
-        [newTop]: 'anim-loop-br-to-top',
-        [newBottomLeft]: 'anim-loop-top-to-bl',
-        [newBottomRight]: 'anim-loop-bl-to-br',
-      });
+    // If current speaker is already in TOP slot, keep them elevated without replaying movement
+    if (currentSlots[normCurrent] === 'TOP') {
+      return;
     }
 
-    // Clear active animation classes after duration so podiums settle into static slot positions
+    const currentGod = normCurrent;
+    const fromSlot = currentSlots[currentGod] || 'BOTTOM_RIGHT';
+    const godAtTop = Object.keys(currentSlots).find((g) => currentSlots[g] === 'TOP') || prevSpeaker;
+    const thirdGod = GODS.find((g) => g !== currentGod && g !== godAtTop);
+
+    const newSlots = { ...currentSlots };
+    const nextAnim = { athena: '', poseidon: '', hermes: '' };
+
+    // 1. Current speaker ascends to TOP (Circular arc or straight up if interruption)
+    newSlots[currentGod] = 'TOP';
+    if (fromSlot === 'BOTTOM_RIGHT') {
+      nextAnim[currentGod] = isInterruption
+        ? 'anim-straight-up-from-br'
+        : 'anim-arc-br-to-top';
+    } else {
+      nextAnim[currentGod] = isInterruption
+        ? 'anim-straight-up-from-bl'
+        : 'anim-arc-bl-to-top';
+    }
+
+    // 2. Previous speaker at TOP descends, and third god rotates along the orbital circle
+    if (fromSlot === 'BOTTOM_RIGHT') {
+      if (godAtTop) {
+        newSlots[godAtTop] = 'BOTTOM_LEFT';
+        nextAnim[godAtTop] = 'anim-arc-top-to-bl';
+      }
+      if (thirdGod) {
+        newSlots[thirdGod] = 'BOTTOM_RIGHT';
+        nextAnim[thirdGod] = 'anim-arc-bl-to-br';
+      }
+    } else {
+      // fromSlot was BOTTOM_LEFT
+      if (godAtTop) {
+        newSlots[godAtTop] = 'BOTTOM_RIGHT';
+        nextAnim[godAtTop] = 'anim-arc-top-to-br';
+      }
+      if (thirdGod) {
+        newSlots[thirdGod] = 'BOTTOM_LEFT';
+        nextAnim[thirdGod] = 'anim-arc-br-to-bl';
+      }
+    }
+
+    setSlots(newSlots);
+    setAnimClasses(nextAnim);
+
+    // Cleanly clear animation classes once the transition finishes (720ms)
+    // The card seamlessly settles into its static slot class with zero jump
     if (animTimeoutRef.current) clearTimeout(animTimeoutRef.current);
     animTimeoutRef.current = setTimeout(() => {
       setAnimClasses({
@@ -106,7 +130,7 @@ export default function CouncilStage({
         hermes: '',
       });
       setActiveInterruption(false);
-    }, 850);
+    }, 720);
 
     return () => {
       if (animTimeoutRef.current) clearTimeout(animTimeoutRef.current);
@@ -115,9 +139,15 @@ export default function CouncilStage({
 
   const handleManualInterrupt = (godName) => {
     setActiveInterruption(true);
+    const god = godName.toLowerCase();
+    const fromSlot = slotsRef.current[god];
+    const anim = fromSlot === 'BOTTOM_LEFT'
+      ? 'anim-straight-up-from-bl'
+      : 'anim-straight-up-from-br';
+
     setAnimClasses((prev) => ({
       ...prev,
-      [godName.toLowerCase()]: 'anim-straight-up',
+      [god]: anim,
     }));
     if (onChallengeGod) {
       onChallengeGod(godName);

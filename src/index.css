@@ -206,8 +206,8 @@ body {
    ========================================================================== */
 
 :root {
-  --orbit-x: clamp(140px, 24vw, 250px);
-  --orbit-y: clamp(130px, 18vw, 175px);
+  --orbit-x: clamp(170px, 26vw, 300px);
+  --orbit-y: clamp(130px, 17vw, 185px);
 }
 
 /* Subtle, Warm Backlight Sign Diffusion */
@@ -225,114 +225,217 @@ body {
 /* Warm, Understated Backlight Aura Palette */
 .backlight-aura-athena {
   background: radial-gradient(circle at 50% 40%, rgba(232, 201, 122, 0.35) 0%, rgba(148, 180, 159, 0.15) 50%, transparent 75%);
-  box-shadow: 0 0 40px rgba(232, 201, 122, 0.22), 0 0 80px rgba(222, 208, 188, 0.1);
+  box-shadow: 0 0 45px rgba(232, 201, 122, 0.22), 0 0 85px rgba(222, 208, 188, 0.1);
 }
 
 .backlight-aura-poseidon {
   background: radial-gradient(circle at 50% 40%, rgba(48, 88, 115, 0.45) 0%, rgba(140, 161, 170, 0.18) 50%, transparent 75%);
-  box-shadow: 0 0 40px rgba(48, 88, 115, 0.28), 0 0 80px rgba(140, 161, 170, 0.1);
+  box-shadow: 0 0 45px rgba(48, 88, 115, 0.28), 0 0 85px rgba(140, 161, 170, 0.1);
 }
 
 .backlight-aura-hermes {
   background: radial-gradient(circle at 50% 40%, rgba(180, 101, 77, 0.38) 0%, rgba(232, 201, 122, 0.15) 50%, transparent 75%);
-  box-shadow: 0 0 40px rgba(180, 101, 77, 0.26), 0 0 80px rgba(232, 201, 122, 0.1);
+  box-shadow: 0 0 45px rgba(180, 101, 77, 0.26), 0 0 85px rgba(232, 201, 122, 0.1);
 }
 
-/* Smooth Circular Loop Transitions */
-@keyframes loopBottomRightToTop {
+/* ==========================================================================
+   SEAMLESS HARDWARE-ACCELERATED ORBITAL TRANSITIONS (60FPS Silky Curves)
+   ========================================================================== */
+
+/* 1. Bottom-Right up to Top (Circular Arc) */
+@keyframes arcBottomRightToTop {
   0% {
-    transform: translate(calc(-50% + var(--orbit-x)), var(--orbit-y)) scale(0.92);
-    opacity: 0.8;
+    transform: translate(calc(-50% + var(--orbit-x)), var(--orbit-y)) scale(0.90);
+    opacity: 0.82;
   }
   45% {
-    transform: translate(calc(-50% + (var(--orbit-x) * 0.65)), calc(var(--orbit-y) * 0.35)) scale(0.98);
-    opacity: 0.9;
+    transform: translate(calc(-50% + (var(--orbit-x) * 0.70)), calc(var(--orbit-y) * 0.30)) scale(0.98);
+    opacity: 0.95;
   }
   100% {
-    transform: translate(-50%, 0px) scale(1.04);
+    transform: translate(-50%, 0px) scale(1.05);
     opacity: 1;
   }
 }
 
-@keyframes loopTopToBottomLeft {
+/* 2. Bottom-Left up to Top (Circular Arc) */
+@keyframes arcBottomLeftToTop {
   0% {
-    transform: translate(-50%, 0px) scale(1.04);
-    opacity: 1;
+    transform: translate(calc(-50% - var(--orbit-x)), var(--orbit-y)) scale(0.90);
+    opacity: 0.82;
   }
   45% {
-    transform: translate(calc(-50% - (var(--orbit-x) * 0.65)), calc(var(--orbit-y) * 0.35)) scale(0.98);
-    opacity: 0.9;
+    transform: translate(calc(-50% - (var(--orbit-x) * 0.70)), calc(var(--orbit-y) * 0.30)) scale(0.98);
+    opacity: 0.95;
   }
   100% {
-    transform: translate(calc(-50% - var(--orbit-x)), var(--orbit-y)) scale(0.92);
-    opacity: 0.8;
+    transform: translate(-50%, 0px) scale(1.05);
+    opacity: 1;
   }
 }
 
-@keyframes loopBottomLeftToBottomRight {
+/* 3. Top down to Bottom-Left (Circular Arc) */
+@keyframes arcTopToBottomLeft {
   0% {
-    transform: translate(calc(-50% - var(--orbit-x)), var(--orbit-y)) scale(0.92);
-    opacity: 0.8;
+    transform: translate(-50%, 0px) scale(1.05);
+    opacity: 1;
+  }
+  45% {
+    transform: translate(calc(-50% - (var(--orbit-x) * 0.70)), calc(var(--orbit-y) * 0.35)) scale(0.98);
+    opacity: 0.95;
+  }
+  100% {
+    transform: translate(calc(-50% - var(--orbit-x)), var(--orbit-y)) scale(0.90);
+    opacity: 0.82;
+  }
+}
+
+/* 4. Top down to Bottom-Right (Circular Arc) */
+@keyframes arcTopToBottomRight {
+  0% {
+    transform: translate(-50%, 0px) scale(1.05);
+    opacity: 1;
+  }
+  45% {
+    transform: translate(calc(-50% + (var(--orbit-x) * 0.70)), calc(var(--orbit-y) * 0.35)) scale(0.98);
+    opacity: 0.95;
+  }
+  100% {
+    transform: translate(calc(-50% + var(--orbit-x)), var(--orbit-y)) scale(0.90);
+    opacity: 0.82;
+  }
+}
+
+/* 5. Bottom-Left along base to Bottom-Right */
+@keyframes arcBottomLeftToBottomRight {
+  0% {
+    transform: translate(calc(-50% - var(--orbit-x)), var(--orbit-y)) scale(0.90);
+    opacity: 0.82;
   }
   50% {
-    transform: translate(-50%, calc(var(--orbit-y) * 1.12)) scale(0.88);
-    opacity: 0.75;
+    transform: translate(-50%, calc(var(--orbit-y) * 1.14)) scale(0.86);
+    opacity: 0.78;
   }
   100% {
-    transform: translate(calc(-50% + var(--orbit-x)), var(--orbit-y)) scale(0.92);
-    opacity: 0.8;
+    transform: translate(calc(-50% + var(--orbit-x)), var(--orbit-y)) scale(0.90);
+    opacity: 0.82;
   }
 }
 
-/* Interruption: Pure, Smooth Straight-Up Vertical Motion */
-@keyframes straightUpInterruption {
+/* 6. Bottom-Right along base to Bottom-Left */
+@keyframes arcBottomRightToBottomLeft {
   0% {
-    transform: translate(-50%, calc(var(--orbit-y) + 30px)) scale(0.92);
-    opacity: 0.75;
+    transform: translate(calc(-50% + var(--orbit-x)), var(--orbit-y)) scale(0.90);
+    opacity: 0.82;
+  }
+  50% {
+    transform: translate(-50%, calc(var(--orbit-y) * 1.14)) scale(0.86);
+    opacity: 0.78;
   }
   100% {
-    transform: translate(-50%, 0px) scale(1.04);
+    transform: translate(calc(-50% - var(--orbit-x)), var(--orbit-y)) scale(0.90);
+    opacity: 0.82;
+  }
+}
+
+/* 7. Interruption: Straight Up from Bottom-Right (No circular arc) */
+@keyframes straightUpFromBottomRight {
+  0% {
+    transform: translate(calc(-50% + var(--orbit-x)), var(--orbit-y)) scale(0.90);
+    opacity: 0.82;
+  }
+  35% {
+    transform: translate(calc(-50% + (var(--orbit-x) * 0.20)), calc(var(--orbit-y) * 0.50)) scale(0.98);
+    opacity: 0.95;
+  }
+  75% {
+    transform: translate(-50%, calc(var(--orbit-y) * 0.12)) scale(1.03);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, 0px) scale(1.05);
     opacity: 1;
   }
 }
 
-/* Orbit Positioning & Animation Helpers */
+/* 8. Interruption: Straight Up from Bottom-Left (No circular arc) */
+@keyframes straightUpFromBottomLeft {
+  0% {
+    transform: translate(calc(-50% - var(--orbit-x)), var(--orbit-y)) scale(0.90);
+    opacity: 0.82;
+  }
+  35% {
+    transform: translate(calc(-50% - (var(--orbit-x) * 0.20)), calc(var(--orbit-y) * 0.50)) scale(0.98);
+    opacity: 0.95;
+  }
+  75% {
+    transform: translate(-50%, calc(var(--orbit-y) * 0.12)) scale(1.03);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, 0px) scale(1.05);
+    opacity: 1;
+  }
+}
+
+/* Settled Orbit Positioning (Exact Match to 100% Keyframe Values) */
 .orbit-slot-top {
-  transform: translate(-50%, 0px) scale(1.04);
-  z-index: 20;
+  transform: translate(-50%, 0px) scale(1.05);
+  z-index: 30;
   opacity: 1;
 }
 
 .orbit-slot-bottom-right {
-  transform: translate(calc(-50% + var(--orbit-x)), var(--orbit-y)) scale(0.92);
+  transform: translate(calc(-50% + var(--orbit-x)), var(--orbit-y)) scale(0.90);
   z-index: 10;
-  opacity: 0.8;
+  opacity: 0.82;
 }
 
 .orbit-slot-bottom-left {
-  transform: translate(calc(-50% - var(--orbit-x)), var(--orbit-y)) scale(0.92);
+  transform: translate(calc(-50% - var(--orbit-x)), var(--orbit-y)) scale(0.90);
   z-index: 10;
-  opacity: 0.8;
+  opacity: 0.82;
 }
 
-.anim-loop-br-to-top {
-  animation: loopBottomRightToTop 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  z-index: 20;
+/* Animation Classes */
+.anim-arc-br-to-top {
+  animation: arcBottomRightToTop 0.72s cubic-bezier(0.25, 1, 0.35, 1) forwards;
+  z-index: 30;
 }
 
-.anim-loop-top-to-bl {
-  animation: loopTopToBottomLeft 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+.anim-arc-bl-to-top {
+  animation: arcBottomLeftToTop 0.72s cubic-bezier(0.25, 1, 0.35, 1) forwards;
+  z-index: 30;
+}
+
+.anim-arc-top-to-bl {
+  animation: arcTopToBottomLeft 0.72s cubic-bezier(0.25, 1, 0.35, 1) forwards;
   z-index: 10;
 }
 
-.anim-loop-bl-to-br {
-  animation: loopBottomLeftToBottomRight 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+.anim-arc-top-to-br {
+  animation: arcTopToBottomRight 0.72s cubic-bezier(0.25, 1, 0.35, 1) forwards;
   z-index: 10;
 }
 
-.anim-straight-up {
-  animation: straightUpInterruption 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  z-index: 25;
+.anim-arc-bl-to-br {
+  animation: arcBottomLeftToBottomRight 0.72s cubic-bezier(0.25, 1, 0.35, 1) forwards;
+  z-index: 10;
+}
+
+.anim-arc-br-to-bl {
+  animation: arcBottomRightToBottomLeft 0.72s cubic-bezier(0.25, 1, 0.35, 1) forwards;
+  z-index: 10;
+}
+
+.anim-straight-up-from-br {
+  animation: straightUpFromBottomRight 0.65s cubic-bezier(0.18, 1, 0.28, 1) forwards;
+  z-index: 35;
+}
+
+.anim-straight-up-from-bl {
+  animation: straightUpFromBottomLeft 0.65s cubic-bezier(0.18, 1, 0.28, 1) forwards;
+  z-index: 35;
 }
 
 /* Architectural Hairline Divider */
