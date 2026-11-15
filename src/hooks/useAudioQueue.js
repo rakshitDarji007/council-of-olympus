@@ -2,6 +2,17 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { fetchTtsAudio } from '../services/api.js';
 
 /**
+ * Unlocks browser audio playback context on user interaction.
+ */
+export function unlockAudio() {
+  if (typeof window === 'undefined') return;
+  try {
+    const silent = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA');
+    silent.play().catch(() => {});
+  } catch (e) {}
+}
+
+/**
  * High-Performance Audio Playback Queue with Prefetching,
  * ElevenLabs Audio Cache, and Web Speech API Fallback.
  */
@@ -9,9 +20,8 @@ export function useAudioQueue({ turns = [], onAllTurnsComplete = null }) {
   const [currentTurnIndex, setCurrentTurnIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
-  const [isPrefetching, setIsPrefetching] = useState(false);
 
-  const audioCacheRef = useRef(new Map()); // turnIndex -> audioUrl or 'FALLBACK'
+  const audioCacheRef = useRef(new Map()); // turnIndex -> audioUrl string
   const currentAudioRef = useRef(null);
   const fallbackTimerRef = useRef(null);
   const isPlayingRef = useRef(isPlaying);
@@ -36,32 +46,36 @@ export function useAudioQueue({ turns = [], onAllTurnsComplete = null }) {
       if (!result.fallback && result.audioUrl) {
         audioCacheRef.current.set(index, result.audioUrl);
       } else {
-        audioCacheRef.current.set(index, 'FALLBACK');
+        const directUrl = `/api/tts?speaker=${encodeURIComponent(turn.speaker)}&text=${encodeURIComponent(turn.text)}`;
+        audioCacheRef.current.set(index, directUrl);
       }
     } catch (e) {
-      audioCacheRef.current.set(index, 'FALLBACK');
+      const directUrl = `/api/tts?speaker=${encodeURIComponent(turn.speaker)}&text=${encodeURIComponent(turn.text)}`;
+      audioCacheRef.current.set(index, directUrl);
     }
   }, [turns]);
 
   // Clean up previous audio/timers
   const stopCurrentPlayback = useCallback(() => {
     if (currentAudioRef.current) {
-      currentAudioRef.current.pause();
+      try {
+        currentAudioRef.current.pause();
+        currentAudioRef.current.currentTime = 0;
+      } catch (e) {}
       currentAudioRef.current = null;
     }
     if (fallbackTimerRef.current) {
       clearTimeout(fallbackTimerRef.current);
       fallbackTimerRef.current = null;
     }
-    if (window.speechSynthesis) {
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
       window.speechSynthesis.cancel();
     }
   }, []);
 
   // Web Speech API fallback synthesizer with distinct character pitches
   const speakWithWebSpeech = useCallback((speaker, text, onEnd) => {
-    if (!window.speechSynthesis || isMuted) {
-      // Fallback timer if speech synth unavailable or muted
+    if (typeof window === 'undefined' || !window.speechSynthesis || isMuted) {
       const wordCount = (text || '').split(' ').length;
       const durationMs = Math.max(3500, wordCount * 280);
       fallbackTimerRef.current = setTimeout(onEnd, durationMs);
@@ -113,14 +127,13 @@ export function useAudioQueue({ turns = [], onAllTurnsComplete = null }) {
     stopCurrentPlayback();
     if (!isPlayingRef.current || !currentTurn) return;
 
-    // Trigger prefetch for turn N+1 immediately!
+    // Trigger prefetch for turn N+1 immediately
     if (currentTurnIndex + 1 < turns.length) {
       prefetchTurnAudio(currentTurnIndex + 1);
     }
 
     let audioUrl = audioCacheRef.current.get(currentTurnIndex);
     if (!audioUrl) {
-      // Fetch current turn if not already cached
       try {
         const result = await fetchTtsAudio({
           speaker: currentTurn.speaker,
@@ -130,33 +143,46 @@ export function useAudioQueue({ turns = [], onAllTurnsComplete = null }) {
           audioUrl = result.audioUrl;
           audioCacheRef.current.set(currentTurnIndex, audioUrl);
         } else {
-          audioUrl = 'FALLBACK';
-          audioCacheRef.current.set(currentTurnIndex, 'FALLBACK');
+          const directUrl = `/api/tts?speaker=${encodeURIComponent(currentTurn.speaker)}&text=${encodeURIComponent(currentTurn.text)}`;
+          audioUrl = directUrl;
+          audioCacheRef.current.set(currentTurnIndex, directUrl);
         }
       } catch (e) {
-        audioUrl = 'FALLBACK';
-        audioCacheRef.current.set(currentTurnIndex, 'FALLBACK');
+        const directUrl = `/api/tts?speaker=${encodeURIComponent(currentTurn.speaker)}&text=${encodeURIComponent(currentTurn.text)}`;
+        audioUrl = directUrl;
+        audioCacheRef.current.set(currentTurnIndex, audioUrl);
       }
     }
 
-    // If real ElevenLabs audio is available and not muted
-    if (audioUrl && audioUrl !== 'FALLBACK' && !isMuted) {
+    // Play ElevenLabs audio
+    if (audioUrl && !isMuted) {
       try {
         const audio = new Audio(audioUrl);
+        audio.volume = 1.0;
         currentAudioRef.current = audio;
+
         audio.onended = () => {
           if (isPlayingRef.current) advanceTurn();
         };
-        audio.onerror = () => {
+
+        audio.onerror = (e) => {
+          console.warn('[AudioQueue] Audio element error, falling back to Web Speech API', e);
           speakWithWebSpeech(currentTurn.speaker, currentTurn.text, advanceTurn);
         };
-        await audio.play();
+
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+          await playPromise;
+        }
       } catch (err) {
-        speakWithWebSpeech(currentTurn.speaker, currentTurn.text, advanceTurn);
+        console.warn('[AudioQueue] Autoplay prevented by browser:', err.message);
+        // Pause and keep turn ready so user can click Play with active gesture
+        setIsPlaying(false);
       }
-    } else {
-      // Use Web Speech API or timer fallback
-      speakWithWebSpeech(currentTurn.speaker, currentTurn.text, advanceTurn);
+    } else if (isMuted) {
+      const wordCount = (currentTurn.text || '').split(' ').length;
+      const durationMs = Math.max(3500, wordCount * 260);
+      fallbackTimerRef.current = setTimeout(advanceTurn, durationMs);
     }
   }, [currentTurn, currentTurnIndex, turns.length, isMuted, prefetchTurnAudio, speakWithWebSpeech, advanceTurn, stopCurrentPlayback]);
 
@@ -177,12 +203,24 @@ export function useAudioQueue({ turns = [], onAllTurnsComplete = null }) {
     }
   }, [turns, prefetchTurnAudio]);
 
-  const startPlayback = () => setIsPlaying(true);
+  const startPlayback = () => {
+    unlockAudio();
+    setIsPlaying(true);
+  };
+
   const pausePlayback = () => {
     setIsPlaying(false);
     stopCurrentPlayback();
   };
-  const togglePlayPause = () => (isPlaying ? pausePlayback() : startPlayback());
+
+  const togglePlayPause = () => {
+    unlockAudio();
+    if (isPlaying) {
+      pausePlayback();
+    } else {
+      startPlayback();
+    }
+  };
 
   const skipNext = () => {
     stopCurrentPlayback();

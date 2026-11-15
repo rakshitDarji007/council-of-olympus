@@ -100,14 +100,19 @@ export default function SubtitleBar({
 
         {/* Player Controls Bar */}
         <div className="flex items-center justify-between pt-3 border-t border-[#ded0bc] flex-wrap gap-3">
-          <div className="flex items-center gap-2">
-            {/* Play/Pause */}
+          <div className="flex items-center gap-2.5">
+            {/* Play/Pause Button */}
             <button
               onClick={onTogglePlayPause}
-              title={isPlaying ? 'Pause' : 'Play'}
-              className="p-2.5 rounded-full header-pill-nav text-[#1a3a52] hover:bg-[#eee3d2] transition"
+              title={isPlaying ? 'Pause Voice' : 'Play Council Voice'}
+              className={`px-4 py-2 rounded-full flex items-center gap-2 text-xs font-bold transition shadow-sm ${
+                isPlaying
+                  ? 'header-pill-nav text-[#1a3a52] hover:bg-[#eee3d2]'
+                  : 'bg-[#b4654d] text-[#f6eddf] hover:bg-[#9e4f38] shadow-md'
+              }`}
             >
-              {isPlaying ? <Pause size={15} /> : <Play size={15} />}
+              {isPlaying ? <Pause size={14} /> : <Play size={14} fill="currentColor" />}
+              <span>{isPlaying ? 'Pause Voice' : 'Play Council Voice'}</span>
             </button>
 
             {/* Next Turn */}
@@ -122,14 +127,15 @@ export default function SubtitleBar({
             {/* Audio Mute */}
             <button
               onClick={onToggleMute}
-              title={isMuted ? 'Unmute' : 'Mute'}
-              className={`p-2.5 rounded-full border transition ${
+              title={isMuted ? 'Unmute Voice Audio' : 'Mute Voice Audio'}
+              className={`px-3 py-2 rounded-full border transition flex items-center gap-1.5 text-xs font-semibold ${
                 isMuted
                   ? 'bg-[#fff0ed] text-[#b4654d] border-[#b4654d]'
                   : 'header-pill-nav text-[#506575] hover:text-[#1a3a52]'
               }`}
             >
-              {isMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
+              {isMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
+              <span className="text-[11px] hidden sm:inline">{isMuted ? 'Unmute' : 'Audio On'}</span>
             </button>
           </div>
 

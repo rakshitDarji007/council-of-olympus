@@ -211,16 +211,19 @@ app.post('/api/bluff', async (req, res) => {
 /**
  * TTS: Voice Synthesis with Audio Stream or Cache
  */
-app.post('/api/tts', async (req, res) => {
+const handleTtsRequest = async (req, res) => {
   try {
-    const { speaker, text, customVoiceId, customApiKey } = req.body;
+    const speaker = req.body?.speaker || req.query?.speaker || 'hermes';
+    const text = req.body?.text || req.query?.text;
+    const customVoiceId = req.body?.customVoiceId || req.query?.customVoiceId;
+    const customApiKey = req.body?.customApiKey || req.query?.customApiKey;
 
     if (!text) {
       return res.status(400).json({ error: 'Text is required for TTS' });
     }
 
     const ttsResult = await textToSpeech({
-      speaker: speaker || 'hermes',
+      speaker,
       text,
       customVoiceId,
       customApiKey,
@@ -240,6 +243,7 @@ app.post('/api/tts', async (req, res) => {
       'Content-Length': ttsResult.audioBuffer.length,
       'X-Audio-Cached': String(ttsResult.cached),
       'X-Audio-Hash': ttsResult.hash,
+      'Accept-Ranges': 'bytes',
     });
 
     res.send(ttsResult.audioBuffer);
@@ -248,11 +252,14 @@ app.post('/api/tts', async (req, res) => {
     res.json({
       fallback: true,
       reason: err.message,
-      speaker: req.body.speaker || 'hermes',
-      text: req.body.text || '',
+      speaker: req.body?.speaker || req.query?.speaker || 'hermes',
+      text: req.body?.text || req.query?.text || '',
     });
   }
-});
+};
+
+app.post('/api/tts', handleTtsRequest);
+app.get('/api/tts', handleTtsRequest);
 
 /**
  * STT: Speech to Text Upload

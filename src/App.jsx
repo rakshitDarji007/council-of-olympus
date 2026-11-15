@@ -171,17 +171,23 @@ export default function App() {
       if (debateRes.turns && debateRes.turns.length > 0) {
         setTurns(debateRes.turns);
         setDebateDynamic(debateRes.debate_dynamic || '');
+        resetQueue();
         setCurrentStage(STAGES.DEBATE);
+        setTimeout(() => startPlayback(), 100);
       } else {
         const demo = await getDemoData();
         setTurns(demo.demo.turns);
+        resetQueue();
         setCurrentStage(STAGES.DEBATE);
+        setTimeout(() => startPlayback(), 100);
       }
     } catch (err) {
       console.error('Failed to initiate debate:', err);
       const demo = await getDemoData();
       setTurns(demo.demo.turns);
+      resetQueue();
       setCurrentStage(STAGES.DEBATE);
+      setTimeout(() => startPlayback(), 100);
     } finally {
       setIsLoading(false);
     }
@@ -277,7 +283,9 @@ export default function App() {
       setConversation(data.demo.intake_qa);
       setTurns(data.demo.turns);
       setVerdict(data.demo.verdict);
+      resetQueue();
       setCurrentStage(STAGES.DEBATE);
+      setTimeout(() => startPlayback(), 100);
     } catch (e) {
       console.error('Demo load error', e);
     }
@@ -299,6 +307,7 @@ export default function App() {
   const handleReplayDebate = () => {
     resetQueue();
     setCurrentStage(STAGES.DEBATE);
+    setTimeout(() => startPlayback(), 100);
   };
 
   return (
