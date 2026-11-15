@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import GreekMeander from './GreekMeander.jsx';
-import { Mic, MicOff, ArrowRight, AlertTriangle, Compass, Send, Sparkles } from 'lucide-react';
+import { Mic, MicOff, AlertTriangle, Compass, Send, Sparkles } from 'lucide-react';
 
 export default function IntakeOracle({
   dilemma = '',
@@ -174,43 +174,6 @@ export default function IntakeOracle({
               </div>
             </div>
           </form>
-
-          {/* Classic Crossroads (Curated Scenarios) */}
-          <div className="w-full">
-            <div className="flex items-center justify-between mb-4 px-1">
-              <span className="text-[11px] font-mono tracking-[0.2em] text-[#b4654d] uppercase font-bold">
-                Classic Crossroads
-              </span>
-              <span className="text-xs text-[#506575]">Select to load an adversarial deliberation</span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {sampleDilemmas.map((sample, idx) => (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => onSelectSampleDilemma(sample.text)}
-                  className="p-5 text-left rounded-2xl odyssey-card hover:bg-[#fffcf7] transition-all group flex flex-col justify-between"
-                >
-                  <div>
-                    <span className="text-[10px] font-mono tracking-wider text-[#b4654d] uppercase font-bold mb-1.5 block">
-                      {sample.category}
-                    </span>
-                    <h4 className="text-sm font-sans font-bold text-[#1a3a52] group-hover:text-[#305873] transition">
-                      {sample.title}
-                    </h4>
-                    <p className="text-xs text-[#506575] font-sans mt-2 line-clamp-2 leading-relaxed">
-                      {sample.text}
-                    </p>
-                  </div>
-                  <div className="mt-4 pt-3 border-t border-[#ded0bc]/60 flex items-center justify-between text-[11px]">
-                    <span className="font-serif italic text-[#305873]">Deliberate scenario</span>
-                    <ArrowRight size={13} className="text-[#b4654d] group-hover:translate-x-1 transition-transform" />
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
         </div>
       )}
 
