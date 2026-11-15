@@ -107,7 +107,6 @@ export default function App() {
       }
     } catch (err) {
       console.error('Intake error:', err);
-      // On any intake error, proceed directly to council debate rather than asking a stale question
       await initiateDebate(text, []);
     } finally {
       setIsLoading(false);
@@ -135,7 +134,6 @@ export default function App() {
         return;
       }
 
-      // If ready, no next question, identical question returned, or already answered 1-2 questions -> proceed to debate!
       if (
         res.ready ||
         !res.next_question ||
@@ -170,84 +168,28 @@ export default function App() {
         debateSoFar: [],
       });
 
-      setTurns(debateRes.turns || []);
-      setDebateDynamic(debateRes.debate_dynamic || 'Athena, Poseidon, and Hermes dispute the optimal course.');
-      setCurrentStage(STAGES.DEBATE);
-      resetQueue();
-      setTimeout(() => startPlayback(), 500);
-    } catch (err) {
-      console.error('Debate generation error:', err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleInterjectionSubmit = async (interjectionText) => {
-    setIsLoading(true);
-    setLoadingText('The Council evaluates your interjection...');
-    setInterjections((prev) => [...prev, interjectionText]);
-
-    try {
-      const remainingTurns = turns.slice(0, currentTurnIndex + 1);
-      const debateRes = await postDebate({
-        dilemma,
-        answers: conversation,
-        interjection: interjectionText,
-        debateSoFar: remainingTurns,
-      });
-
-      const adaptedTurns = debateRes.turns || [];
-      const combinedTurns = [...remainingTurns, ...adaptedTurns];
-      setTurns(combinedTurns);
-      if (debateRes.debate_dynamic) {
-        setDebateDynamic(debateRes.debate_dynamic);
+      if (debateRes.turns && debateRes.turns.length > 0) {
+        setTurns(debateRes.turns);
+        setDebateDynamic(debateRes.debate_dynamic || '');
+        setCurrentStage(STAGES.DEBATE);
+      } else {
+        const demo = await getDemoData();
+        setTurns(demo.demo.turns);
+        setCurrentStage(STAGES.DEBATE);
       }
-      setIsInterjectOpen(false);
-      skipNext();
-      startPlayback();
     } catch (err) {
-      console.error('Interjection update error:', err);
-      setIsInterjectOpen(false);
+      console.error('Failed to initiate debate:', err);
+      const demo = await getDemoData();
+      setTurns(demo.demo.turns);
+      setCurrentStage(STAGES.DEBATE);
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const handleChallengeGod = async (speaker) => {
-    setIsChallenging(true);
-    const activeTurn = turns[currentTurnIndex] || {};
-
-    try {
-      const rebuttal = await postChallengeBluff({
-        speaker,
-        stance: activeTurn.stance || 'against',
-        argument: activeTurn.text || 'Guard the downside',
-        dilemma,
-      });
-
-      const newTurns = [...turns];
-      newTurns.splice(currentTurnIndex + 1, 0, {
-        round: activeTurn.round || 1,
-        speaker: rebuttal.speaker,
-        addressed_to: 'mortal',
-        stance: rebuttal.stance,
-        text: rebuttal.text,
-      });
-
-      setTurns(newTurns);
-      skipNext();
-      startPlayback();
-    } catch (err) {
-      console.error('Challenge error:', err);
-    } finally {
-      setIsChallenging(false);
     }
   };
 
   const handleFetchVerdict = async () => {
     setIsLoading(true);
-    setLoadingText('Synthesizing Odysseus\' final ruling...');
-    pausePlayback();
+    setLoadingText('Odysseus is formulating the strategic verdict...');
 
     try {
       const verdictRes = await postVerdict({
@@ -260,201 +202,261 @@ export default function App() {
       setVerdict(verdictRes);
       setCurrentStage(STAGES.VERDICT);
     } catch (err) {
-      console.error('Verdict error:', err);
+      console.error('Failed to get verdict:', err);
+      const demo = await getDemoData();
+      setVerdict(demo.demo.verdict);
+      setCurrentStage(STAGES.VERDICT);
     } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleInterjectionSubmit = async (interjectionText) => {
+    setIsLoading(true);
+    setLoadingText('The Council responds to your objection...');
+    const updatedInj = [...interjections, interjectionText];
+    setInterjections(updatedInj);
+
+    try {
+      const newDebate = await postDebate({
+        dilemma,
+        answers: conversation,
+        interjection: interjectionText,
+        debateSoFar: turns,
+      });
+
+      if (newDebate.turns && newDebate.turns.length > 0) {
+        setTurns(newDebate.turns);
+        setDebateDynamic(newDebate.debate_dynamic || 'The council reacts to mortal interjection.');
+      }
+    } catch (err) {
+      console.error('Failed to process interjection:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleChallengeGod = async (godName) => {
+    const godTurns = turns.filter((t) => t.speaker?.toLowerCase() === godName.toLowerCase());
+    const lastGodTurn = godTurns[godTurns.length - 1];
+    if (!lastGodTurn) return;
+
+    setIsChallenging(true);
+    setIsLoading(true);
+    setLoadingText(`Interrogating ${godName.toUpperCase()}...`);
+
+    try {
+      const bluffRes = await postChallengeBluff({
+        god: godName,
+        claim: lastGodTurn.text,
+        dilemma,
+      });
+
+      if (bluffRes.defense) {
+        const defenseTurn = {
+          round: (lastGodTurn.round || 1) + 1,
+          speaker: godName.toLowerCase(),
+          addressed_to: 'mortal',
+          stance: lastGodTurn.stance || 'conditional',
+          text: `[Challenged]: ${bluffRes.defense}`,
+        };
+        setTurns((prev) => [...prev, defenseTurn]);
+      }
+    } catch (err) {
+      console.error('Challenge error:', err);
+    } finally {
+      setIsChallenging(false);
       setIsLoading(false);
     }
   };
 
   const handleLoadDemoDilemma = async () => {
-    setIsLoading(true);
-    setLoadingText('Loading dilemma: Computer Science vs Philosophy & Writing...');
-
     try {
       const data = await getDemoData();
-      const demo = data.demo;
-      setDilemma(demo.dilemma);
-      setConversation(demo.answers);
-      setTurns(demo.turns);
-      setDebateDynamic(demo.debate_dynamic);
-      setVerdict(demo.verdict);
+      setDilemma(data.demo.dilemma);
+      setConversation(data.demo.intake_qa);
+      setTurns(data.demo.turns);
+      setVerdict(data.demo.verdict);
       setCurrentStage(STAGES.DEBATE);
-      resetQueue();
-      setTimeout(() => startPlayback(), 500);
-    } catch (err) {
-      console.error('Failed to load demo', err);
-    } finally {
-      setIsLoading(false);
+    } catch (e) {
+      console.error('Demo load error', e);
     }
   };
 
   const handleReset = () => {
     resetQueue();
-    setCurrentStage(STAGES.INTAKE);
     setDilemma('');
     setConversation([]);
     setCurrentOracleQuestion(null);
-    setTurns([]);
-    setVerdict(null);
-    setInterjections([]);
     setEmergencyData(null);
+    setTurns([]);
+    setDebateDynamic('');
+    setInterjections([]);
+    setVerdict(null);
+    setCurrentStage(STAGES.INTAKE);
   };
 
   const handleReplayDebate = () => {
-    setCurrentStage(STAGES.DEBATE);
     resetQueue();
-    setTimeout(() => startPlayback(), 400);
+    setCurrentStage(STAGES.DEBATE);
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col justify-between selection:bg-[#D97746] selection:text-[#0A0F1D] grain-overlay">
-      <StarBackground />
+    <div className="relative min-h-screen bg-[#07080D] p-2 sm:p-5 lg:p-6 flex flex-col justify-between selection:bg-[#E8A28E] selection:text-[#0A0C16]">
+      {/* Floating Viewport Canvas (Inspired by Image 1) */}
+      <div className="w-full max-w-7xl mx-auto flex-1 flex flex-col rounded-[28px] sm:rounded-[36px] dawn-ambient-canvas border border-white/[0.08] shadow-[0_30px_90px_-20px_rgba(0,0,0,0.85)] overflow-hidden relative">
+        <StarBackground />
 
-      {/* REFINED EDITORIAL APP BAR */}
-      <header className="relative z-40 w-full bg-[#0A0F1D]/80 backdrop-blur-md border-b border-white/5 px-4 sm:px-6 py-3.5 select-none">
-        <div className="max-w-6xl mx-auto px-4 py-3.5 flex items-center justify-between gap-4">
-          {/* Logo & Brand Title */}
-          <div
-            onClick={handleReset}
-            className="flex items-center gap-3 cursor-pointer group"
-          >
-            <div className="w-6 h-6 rounded-md bg-gradient-to-br from-[#D4A373] to-[#B38054] flex items-center justify-center text-zinc-950 font-serif font-bold text-xs shadow-sm">
-              Ω
+        {/* TOP FROSTED APP BAR (Inspired by Image 1 & Hermes Agent) */}
+        <header className="relative z-40 w-full bg-black/25 backdrop-blur-xl border-b border-white/[0.08] px-5 sm:px-8 py-3.5 select-none">
+          <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
+            {/* Logo & Brand Title */}
+            <div
+              onClick={handleReset}
+              className="flex items-center gap-3 cursor-pointer group"
+            >
+              <div className="w-7 h-7 rounded-full frosted-capsule flex items-center justify-center text-[#E8A28E] font-serif font-bold text-xs shadow-sm">
+                Ω
+              </div>
+              <div className="flex items-center gap-2.5">
+                <h1 className="font-display text-xs sm:text-sm font-bold tracking-[0.2em] text-white uppercase group-hover:text-[#E8A28E] transition-colors">
+                  The Council of Olympus
+                </h1>
+                <span className="hidden lg:inline-block text-[10px] font-mono tracking-wider px-2.5 py-0.5 rounded-full frosted-capsule text-zinc-400">
+                  Tripartite Deliberation
+                </span>
+              </div>
             </div>
-            <div className="flex items-center gap-2.5">
-              <h1 className="font-mono text-xs sm:text-sm font-semibold tracking-[0.18em] text-zinc-100 uppercase group-hover:text-[#D4A373] transition-colors">
-                The Council of Olympus
-              </h1>
-              <span className="hidden md:inline-block text-[10px] font-mono tracking-wider px-2 py-0.5 rounded-md bg-white/[0.03] text-zinc-400 border border-white/[0.06]">
-                Homeric Decision Engine
+
+            {/* Frosted Center Search/Context Capsule (Inspired by Image 1 Header) */}
+            <div className="hidden md:flex items-center gap-2 px-4 py-1.5 rounded-full frosted-capsule text-xs text-zinc-300">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#E8A28E] animate-pulse" />
+              <span className="font-sans text-[11px] text-zinc-300">
+                Adversarial AI Counsel • Athena • Poseidon • Hermes • Odysseus
               </span>
             </div>
-          </div>
 
-          {/* Actions & Utilities */}
-          <div className="flex items-center gap-2">
-            {/* Quick Demo Button */}
-            <button
-              onClick={handleLoadDemoDilemma}
-              title="Load sample dilemma"
-              className="px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-sans font-medium border border-white/[0.08] hover:border-white/20 transition flex items-center gap-1.5"
-            >
-              <Zap size={13} className="text-[#D4A373]" />
-              <span className="hidden sm:inline">Sample Scenario</span>
-            </button>
+            {/* Actions & Utilities */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleLoadDemoDilemma}
+                title="Load sample dilemma"
+                className="px-4 py-1.5 rounded-full frosted-capsule text-zinc-200 hover:text-white text-xs font-sans font-medium transition flex items-center gap-1.5 hover:scale-[1.02]"
+              >
+                <Zap size={13} className="text-[#E8A28E]" />
+                <span className="hidden sm:inline">Sample Scenario</span>
+              </button>
 
-            {/* Audio Mute */}
-            <button
-              onClick={toggleMute}
-              title={isMuted ? 'Unmute Audio' : 'Mute Audio'}
-              className={`p-2 rounded-lg border transition ${
-                isMuted
-                  ? 'bg-rose-950/40 text-rose-300 border-rose-500/30'
-                  : 'bg-zinc-900/80 text-zinc-400 hover:text-white border-white/[0.08]'
-              }`}
-            >
-              {isMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
-            </button>
+              <button
+                onClick={toggleMute}
+                title={isMuted ? 'Unmute Audio' : 'Mute Audio'}
+                className={`p-2 rounded-full border transition ${
+                  isMuted
+                    ? 'bg-rose-950/50 text-rose-300 border-rose-500/40'
+                    : 'frosted-capsule text-zinc-400 hover:text-white'
+                }`}
+              >
+                {isMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
+              </button>
 
-            {/* Telemetry Stream */}
-            <button
-              onClick={() => setIsDebugOpen(true)}
-              title="Telemetry & Logs"
-              className="p-2 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 text-zinc-400 hover:text-white border border-white/[0.08] transition"
-            >
-              <Terminal size={14} />
-            </button>
+              <button
+                onClick={() => setIsDebugOpen(true)}
+                title="Telemetry & Logs"
+                className="p-2 rounded-full frosted-capsule text-zinc-400 hover:text-white transition"
+              >
+                <Terminal size={14} />
+              </button>
 
-            {/* Settings */}
-            <button
-              onClick={() => setIsSettingsOpen(true)}
-              title="Settings"
-              className="p-2 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 text-zinc-400 hover:text-white border border-white/[0.08] transition"
-            >
-              <Settings size={14} />
-            </button>
-          </div>
-        </div>
-      </header>
-
-      {/* MAIN VIEWPORT */}
-      <main className="relative z-20 flex-1 flex flex-col justify-center py-6 sm:py-8">
-        {/* Loading Modal */}
-        {isLoading && (
-          <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/70 backdrop-blur-md select-none animate-fade-in">
-            <div className="editorial-card p-6 sm:p-8 rounded-xl max-w-sm text-center shadow-2xl">
-              <div className="w-7 h-7 mx-auto mb-4 border-2 border-[#D4A373] border-t-transparent rounded-full animate-spin" />
-              <h3 className="font-heading text-lg font-normal text-zinc-100 mb-1">
-                The Council Deliberates
-              </h3>
-              <p className="text-xs font-sans text-zinc-400">
-                {loadingText}
-              </p>
+              <button
+                onClick={() => setIsSettingsOpen(true)}
+                title="Settings"
+                className="p-2 rounded-full frosted-capsule text-zinc-400 hover:text-white transition"
+              >
+                <Settings size={14} />
+              </button>
             </div>
           </div>
-        )}
+        </header>
 
-        {/* STAGE 1: INTAKE */}
-        {currentStage === STAGES.INTAKE && (
-          <IntakeOracle
-            dilemma={dilemma}
-            conversation={conversation}
-            currentQuestion={currentOracleQuestion}
-            isWaiting={isLoading}
-            isRecording={isRecording}
-            emergencyData={emergencyData}
-            onSubmitDilemma={handleSubmitDilemma}
-            onSubmitAnswer={handleSubmitAnswer}
-            onProceedToCouncil={handleProceedToCouncilDirect}
-            onStartVoiceInput={() => {
-              setSpeechTargetCallback(() => {});
-              startRecording();
-            }}
-            onStopVoiceInput={stopRecording}
-            onSelectSampleDilemma={(text) => handleSubmitDilemma(text)}
-          />
-        )}
+        {/* MAIN VIEWPORT */}
+        <main className="relative z-20 flex-1 flex flex-col justify-center py-6 sm:py-10">
+          {/* Loading Modal */}
+          {isLoading && (
+            <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/75 backdrop-blur-xl select-none animate-fade-in">
+              <div className="editorial-card p-6 sm:p-8 rounded-3xl max-w-sm text-center shadow-2xl">
+                <div className="w-8 h-8 mx-auto mb-4 border-2 border-[#E8A28E] border-t-transparent rounded-full animate-spin" />
+                <h3 className="font-heading text-lg font-normal text-white mb-1">
+                  The Council Deliberates
+                </h3>
+                <p className="text-xs font-sans text-zinc-400">
+                  {loadingText}
+                </p>
+              </div>
+            </div>
+          )}
 
-        {/* STAGE 2: COUNCIL DEBATE */}
-        {currentStage === STAGES.DEBATE && (
-          <div className="w-full flex flex-col gap-6 sm:gap-8">
-            <CouncilStage
-              currentSpeaker={currentTurn?.speaker || 'athena'}
-              turns={turns}
-              currentTurnIndex={currentTurnIndex}
-              debateDynamic={debateDynamic}
-              onChallengeGod={handleChallengeGod}
-              isChallenging={isChallenging}
+          {/* STAGE 1: INTAKE */}
+          {currentStage === STAGES.INTAKE && (
+            <IntakeOracle
+              dilemma={dilemma}
+              conversation={conversation}
+              currentQuestion={currentOracleQuestion}
+              isWaiting={isLoading}
+              isRecording={isRecording}
+              emergencyData={emergencyData}
+              onSubmitDilemma={handleSubmitDilemma}
+              onSubmitAnswer={handleSubmitAnswer}
+              onProceedToCouncil={handleProceedToCouncilDirect}
+              onStartVoiceInput={() => {
+                setSpeechTargetCallback(() => {});
+                startRecording();
+              }}
+              onStopVoiceInput={stopRecording}
+              onSelectSampleDilemma={(text) => handleSubmitDilemma(text)}
             />
+          )}
 
-            <SubtitleBar
-              currentTurn={currentTurn}
-              turnIndex={currentTurnIndex}
-              totalTurns={turns.length}
-              isPlaying={isPlaying}
-              isMuted={isMuted}
-              onToggleMute={toggleMute}
-              onNextTurn={skipNext}
-              onSkipToVerdict={handleFetchVerdict}
-              onOpenInterject={() => setIsInterjectOpen(true)}
-              onTogglePlayPause={togglePlayPause}
-              isGenerating={isLoading}
+          {/* STAGE 2: COUNCIL DEBATE */}
+          {currentStage === STAGES.DEBATE && (
+            <div className="w-full flex flex-col gap-6 sm:gap-8">
+              <CouncilStage
+                currentSpeaker={currentTurn?.speaker || 'athena'}
+                turns={turns}
+                currentTurnIndex={currentTurnIndex}
+                debateDynamic={debateDynamic}
+                onChallengeGod={handleChallengeGod}
+                isChallenging={isChallenging}
+              />
+
+              <SubtitleBar
+                currentTurn={currentTurn}
+                turnIndex={currentTurnIndex}
+                totalTurns={turns.length}
+                isPlaying={isPlaying}
+                isMuted={isMuted}
+                onToggleMute={toggleMute}
+                onNextTurn={skipNext}
+                onSkipToVerdict={handleFetchVerdict}
+                onOpenInterject={() => setIsInterjectOpen(true)}
+                onTogglePlayPause={togglePlayPause}
+                isGenerating={isLoading}
+              />
+            </div>
+          )}
+
+          {/* STAGE 3: ODYSSEUS' VERDICT */}
+          {currentStage === STAGES.VERDICT && (
+            <OdysseusVerdict
+              verdict={verdict}
+              dilemma={dilemma}
+              onReset={handleReset}
+              onReplayDebate={handleReplayDebate}
             />
-          </div>
-        )}
+          )}
+        </main>
 
-        {/* STAGE 3: ODYSSEUS' VERDICT */}
-        {currentStage === STAGES.VERDICT && (
-          <OdysseusVerdict
-            verdict={verdict}
-            dilemma={dilemma}
-            onReset={handleReset}
-            onReplayDebate={handleReplayDebate}
-          />
-        )}
-      </main>
-
-      <WaveFooter isLoading={isLoading} />
+        <WaveFooter isLoading={isLoading} />
+      </div>
 
       {/* MODALS */}
       <InterjectionModal

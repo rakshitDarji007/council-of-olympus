@@ -1,6 +1,6 @@
 import React from 'react';
 import GodAvatar from './GodAvatar.jsx';
-import { Shield, Anchor, Feather, Swords, Sparkles } from 'lucide-react';
+import { Shield, Anchor, Feather, Swords } from 'lucide-react';
 
 const GOD_INFO = {
   athena: {
@@ -13,7 +13,7 @@ const GOD_INFO = {
   poseidon: {
     name: 'POSEIDON',
     title: 'Downside & Runway',
-    domain: 'Cash reserves, debt exposure, irreversible friction.',
+    domain: 'Cash runway, irreversible friction, downside exposure.',
     color: '#2A7385',
     icon: Anchor,
   },
@@ -21,7 +21,7 @@ const GOD_INFO = {
     name: 'HERMES',
     title: 'Agility & Optionality',
     domain: 'Rapid pilots, cheap reversibility, asymmetric upside.',
-    color: '#D4A373',
+    color: '#E8A28E',
     icon: Feather,
   },
 };
@@ -47,21 +47,21 @@ export default function GodPodium({
 
   return (
     <div
-      className={`relative flex flex-col justify-between rounded-xl p-5 sm:p-6 transition-all duration-300 select-none ${
+      className={`relative flex flex-col justify-between rounded-3xl p-6 transition-all duration-500 select-none ${
         isActive
-          ? 'editorial-card-active -translate-y-1.5 z-20'
+          ? 'editorial-card-active -translate-y-2 z-20 scale-[1.02]'
           : 'editorial-card opacity-80 hover:opacity-100 z-10'
       }`}
-      style={{ width: '290px', minHeight: '360px' }}
+      style={{ width: '295px', minHeight: '380px' }}
     >
       {/* Top Status & Stance */}
       <div>
-        <div className="flex items-center justify-between mb-4 pb-3 border-b border-white/[0.06]">
+        <div className="flex items-center justify-between mb-4 pb-3 border-b border-white/[0.08]">
           {/* Active status indicator */}
           <div className="flex items-center gap-1.5">
             <span
-              className={`w-1.5 h-1.5 rounded-full ${
-                isActive ? 'bg-[#D4A373] animate-pulse' : 'bg-zinc-600'
+              className={`w-2 h-2 rounded-full ${
+                isActive ? 'bg-[#E8A28E] animate-pulse' : 'bg-zinc-600'
               }`}
             />
             <span className="text-[10px] font-mono tracking-widest uppercase text-zinc-400">
@@ -69,69 +69,69 @@ export default function GodPodium({
             </span>
           </div>
 
-          {/* Stance Pip */}
+          {/* Stance Capsule */}
           {currentStanceInfo ? (
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full frosted-capsule">
               <span className={`w-1.5 h-1.5 rounded-full ${currentStanceInfo.dot}`} />
-              <span className={`text-[11px] font-sans font-medium ${currentStanceInfo.text}`}>
+              <span className={`text-[10px] font-mono tracking-wider uppercase font-semibold ${currentStanceInfo.text}`}>
                 {currentStanceInfo.label}
               </span>
             </div>
           ) : (
-            <span className="text-[10px] font-mono text-zinc-600">Pending</span>
+            <span className="text-[10px] font-mono text-zinc-600 uppercase">Pending</span>
           )}
         </div>
 
         {/* Insignia & Speaker Identity */}
-        <div className="flex items-center gap-3.5 mb-4">
+        <div className="flex items-center gap-4 mb-4">
           <div className="relative shrink-0">
             <GodAvatar
               speaker={speaker}
-              size={64}
+              size={68}
               isActive={isActive}
             />
           </div>
 
           <div>
-            <h3 className="font-heading text-lg font-bold tracking-wide text-zinc-100">
+            <h3 className="font-display text-base font-bold tracking-wider text-white uppercase">
               {info.name}
             </h3>
-            <p className="text-xs font-sans text-[#D4A373] font-medium">
+            <p className="text-xs font-sans text-[#E8A28E] font-medium">
               {info.title}
             </p>
           </div>
         </div>
 
         {/* Strategic Focus Domain */}
-        <p className="text-xs font-sans text-zinc-400 leading-relaxed mb-4">
+        <p className="text-xs font-sans text-zinc-300 leading-relaxed mb-4">
           {info.domain}
         </p>
 
-        {/* Latest Argument Excerpt */}
+        {/* Latest Argument Excerpt in Literary Serif */}
         {latestTurnText && (
-          <div className="p-3 rounded-lg bg-black/40 border border-white/[0.05] text-xs font-serif text-zinc-300 italic leading-snug line-clamp-3">
+          <div className="p-3.5 rounded-2xl bg-black/40 border border-white/[0.06] text-xs font-serif text-zinc-200 italic leading-relaxed line-clamp-3">
             "{latestTurnText}"
           </div>
         )}
       </div>
 
       {/* Bottom Audio VU Waveform / Challenge */}
-      <div className="pt-4 border-t border-white/[0.05] mt-4 flex items-center justify-between">
+      <div className="pt-4 border-t border-white/[0.08] mt-4 flex items-center justify-between">
         {/* Hardware-style Audio Visualizer Bars */}
-        <div className="flex items-end gap-1 h-4">
+        <div className="flex items-end gap-1 h-5">
           {isActive ? (
             <>
-              <span className="w-1 bg-[#D4A373] rounded-full animate-[pulse_0.6s_ease-in-out_infinite] h-3" />
-              <span className="w-1 bg-[#D4A373] rounded-full animate-[pulse_0.8s_ease-in-out_infinite_0.1s] h-4" />
-              <span className="w-1 bg-[#D4A373] rounded-full animate-[pulse_0.5s_ease-in-out_infinite_0.2s] h-2" />
-              <span className="w-1 bg-[#D4A373] rounded-full animate-[pulse_0.9s_ease-in-out_infinite_0.3s] h-3.5" />
+              <span className="w-1 bg-[#E8A28E] rounded-full animate-[pulse_0.5s_ease-in-out_infinite] h-3.5" />
+              <span className="w-1 bg-[#E8A28E] rounded-full animate-[pulse_0.7s_ease-in-out_infinite_0.1s] h-5" />
+              <span className="w-1 bg-[#E8A28E] rounded-full animate-[pulse_0.4s_ease-in-out_infinite_0.2s] h-2.5" />
+              <span className="w-1 bg-[#E8A28E] rounded-full animate-[pulse_0.8s_ease-in-out_infinite_0.3s] h-4" />
             </>
           ) : (
             <>
-              <span className="w-1 bg-zinc-700/50 rounded-full h-1.5" />
-              <span className="w-1 bg-zinc-700/50 rounded-full h-1.5" />
-              <span className="w-1 bg-zinc-700/50 rounded-full h-1.5" />
-              <span className="w-1 bg-zinc-700/50 rounded-full h-1.5" />
+              <span className="w-1 bg-zinc-700/60 rounded-full h-1.5" />
+              <span className="w-1 bg-zinc-700/60 rounded-full h-1.5" />
+              <span className="w-1 bg-zinc-700/60 rounded-full h-1.5" />
+              <span className="w-1 bg-zinc-700/60 rounded-full h-1.5" />
             </>
           )}
         </div>
@@ -141,7 +141,7 @@ export default function GodPodium({
           <button
             onClick={() => onChallenge(speaker)}
             disabled={isChallenging}
-            className="text-[11px] font-sans font-medium text-zinc-400 hover:text-[#D4A373] transition flex items-center gap-1.5 px-2.5 py-1 rounded-md hover:bg-white/[0.04] disabled:opacity-50"
+            className="text-[11px] font-mono tracking-wider uppercase text-zinc-400 hover:text-[#E8A28E] transition flex items-center gap-1.5 px-3 py-1 rounded-full frosted-capsule disabled:opacity-50"
           >
             <Swords size={12} />
             <span>Challenge</span>
