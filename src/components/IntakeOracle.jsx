@@ -181,15 +181,18 @@ export default function IntakeOracle({
                 <div className="p-5 rounded-xl bg-slate-900/90 border border-[#D97746]/40 shadow-lg relative">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xs font-sans text-[#D97746] tracking-wide uppercase font-semibold flex items-center gap-1.5">
-                      <Sparkles size={14} /> Clarifying Question
+                      <Sparkles size={14} /> Missing Context Needed
                     </span>
                     <span className="text-[11px] font-sans text-slate-400">
-                      Step {conversation.length + 1} of 4
+                      Targeted Question {conversation.length + 1} of 2
                     </span>
                   </div>
 
-                  <p className="text-base sm:text-lg text-slate-100 font-serif leading-relaxed">
+                  <p className="text-base sm:text-lg text-slate-100 font-serif leading-relaxed mb-2">
                     "{currentQuestion}"
+                  </p>
+                  <p className="text-[11px] font-sans text-slate-400 italic">
+                    The Council analyzed your dilemma and identified this specific variable to weigh the downside accurately.
                   </p>
                 </div>
               )}

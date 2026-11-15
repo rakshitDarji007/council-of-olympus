@@ -55,6 +55,38 @@ test('POST /api/intake returns follow-up question or ready state', async () => {
   assert.ok('question_number' in data);
 });
 
+test('POST /api/intake identifies rich context and marks ready: true immediately without extra questions', async () => {
+  const res = await fetch(`${baseUrl}/api/intake`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      dilemma: 'I have two years completed in CS with 15k debt, but I feel burned out by leetcode and want to pivot to philosophy, though I worry about parental expectations and job prospects.',
+      conversation: [],
+    }),
+  });
+  assert.equal(res.status, 200);
+  const data = await res.json();
+  assert.equal(data.ready, true);
+  assert.equal(data.next_question, null);
+});
+
+test('POST /api/intake asks tailored missing-variable question on brief dilemma', async () => {
+  const res = await fetch(`${baseUrl}/api/intake`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      dilemma: 'Should I quit my job for a startup?',
+      conversation: [],
+    }),
+  });
+  assert.equal(res.status, 200);
+  const data = await res.json();
+  assert.equal(data.ready, false);
+  assert.ok(data.next_question);
+  // Question should specifically target runway/salary/risk rather than a generic prompt
+  assert.ok(data.next_question.toLowerCase().includes('runway') || data.next_question.toLowerCase().includes('salary') || data.next_question.toLowerCase().includes('risk'));
+});
+
 test('POST /api/intake triggers safety override on crisis input', async () => {
   const res = await fetch(`${baseUrl}/api/intake`, {
     method: 'POST',

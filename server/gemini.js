@@ -163,26 +163,35 @@ export async function getIntakeQuestion({ dilemma, conversation = [], customApiK
     }
   }
 
-  // If already at 4 questions, declare ready
-  if (conversation.length >= 4) {
+  // If already at 2 questions, declare ready to prevent dragging out intake
+  if (conversation.length >= 2) {
     return {
       next_question: null,
       ready: true,
       question_number: conversation.length,
-      context_summary: 'Sufficient context gathered for the council of Olympus to deliberate.',
+      context_summary: 'Sufficient context gathered for the Council of Olympus to deliberate.',
       is_emergency: false,
     };
   }
 
   const userPrompt = `
-Dilemma from mortal:
+Analyze this dilemma and existing context:
+
+User Dilemma:
 "${dilemma}"
 
-Previous Q&A Context:
-${conversation.map((item, idx) => `Q${idx + 1}: ${item.question}\nA${idx + 1}: ${item.answer}`).join('\n\n')}
+Previous Q&A Context (if any):
+${conversation.map((item, idx) => `Q${idx + 1}: ${item.question}\nA${idx + 1}: ${item.answer}`).join('\n\n') || '(None yet - initial prompt analysis)'}
 
 Question Count So Far: ${conversation.length}
-Evaluate if we need another question (max 4 questions total). If enough information exists to weigh risks, strategy, and compromise, set ready: true.
+
+CRITICAL INSTRUCTIONS:
+1. Carefully analyze if the user's prompt already provides enough context to conduct a substantive three-way debate (Athena on long-term strategy, Poseidon on downside risk, Hermes on pragmatism).
+   - If the dilemma already contains specific options, constraints, or trade-offs, DO NOT ask a question. Immediately set ready: true and next_question: null.
+2. If and only if a crucial piece of missing information is needed to make a sound recommendation:
+   - Identify the exact missing variable (e.g. runway, timeline, sunk costs, or personal priority).
+   - Formulate ONE highly specific, tailored question (under 25 words) that directly references their situation.
+   - Set ready: false and next_question: "<your tailored question>".
   `.trim();
 
   const schema = {
@@ -207,26 +216,20 @@ Evaluate if we need another question (max 4 questions total). If enough informat
     });
     return result;
   } catch (err) {
-    logEvent('INFO', 'FALLBACK', 'Generating heuristic intake question fallback');
-    // Intelligent fallback based on Q&A count
+    logEvent('INFO', 'FALLBACK', 'Running dynamic prompt context analyzer fallback');
+    
+    // Dynamic Heuristic Analyzer: Only ask if vital info is missing
+    const text = dilemma.toLowerCase();
+    const wordCount = dilemma.trim().split(/\s+/).length;
     const count = conversation.length;
-    if (count === 0) {
-      return {
-        next_question: 'What is drawing you toward this new path, and what feels most frustrating about where you are right now?',
-        ready: false,
-        question_number: 1,
-        context_summary: 'Initial dilemma registered.',
-        is_emergency: false,
-      };
-    } else if (count === 1) {
-      return {
-        next_question: 'What does the real financial or time runway look like if this transition hits friction?',
-        ready: false,
-        question_number: 2,
-        context_summary: 'User shared key motivations and pain points.',
-        is_emergency: false,
-      };
-    } else {
+
+    // Check information density
+    const hasMetrics = /\d+[\$k%]?|\$|\b(years?|months?|debt|salary|equity|savings|runway|tuition|credits)\b/i.test(text);
+    const mentionsTradeoff = /\b(but|versus|vs|worried|risk|scared|drained|sacrifice|give up|balance|fear|concern)\b/i.test(text);
+    const mentionsOptions = /\b(or|either|between|staying|leaving|change|move|pivot)\b/i.test(text);
+
+    // If the dilemma is already rich in context, proceed directly to council with 0 questions!
+    if (count >= 1 || (wordCount >= 20 && hasMetrics && mentionsTradeoff) || (wordCount >= 28 && mentionsTradeoff)) {
       return {
         next_question: null,
         ready: true,
@@ -235,6 +238,34 @@ Evaluate if we need another question (max 4 questions total). If enough informat
         is_emergency: false,
       };
     }
+
+    // Otherwise, generate a tailored question based on the missing domain variables:
+    let tailoredQuestion = null;
+    if (/major|degree|college|university|school|study|cs|computer science/i.test(text)) {
+      if (!hasMetrics) {
+        tailoredQuestion = "How far along in this degree are you, and what are the sunk tuition or debt costs?";
+      } else {
+        tailoredQuestion = "What does your day-to-day work look like if you pivot to this new focus?";
+      }
+    } else if (/startup|job|offer|promotion|company|boss|quit|corporate|tech/i.test(text)) {
+      if (!/\b(runway|savings|salary|cash|debt)\b/i.test(text)) {
+        tailoredQuestion = "What does your financial runway or salary difference look like between these two options?";
+      } else {
+        tailoredQuestion = "What is the primary downside risk or worst-case scenario you are worried about?";
+      }
+    } else if (/move|moving|city|relocate|partner|relationship|love|marriage/i.test(text)) {
+      tailoredQuestion = "What career or personal sacrifices would relocating require from you?";
+    } else {
+      tailoredQuestion = "What is the primary downside or irreversible risk if this choice doesn't pan out?";
+    }
+
+    return {
+      next_question: tailoredQuestion,
+      ready: false,
+      question_number: count + 1,
+      context_summary: 'Analyzed dilemma context; requesting missing trade-off variable.',
+      is_emergency: false,
+    };
   }
 }
 
