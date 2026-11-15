@@ -158,7 +158,7 @@ export async function getIntakeQuestion({ dilemma, conversation = [], customApiK
         question_number: conversation.length,
         is_emergency: true,
         emergency_message:
-          'Mortal friend, your safety and life are precious above all voyages. The gods yield to human healers. Please pause this council and reach out immediately: Call or text 988 (USA Suicide & Crisis Lifeline) or contact your local emergency services (911). You do not have to carry this storm alone.',
+          'Your safety and well-being are paramount. Please pause this session and reach out immediately: Call or text 988 (Suicide & Crisis Lifeline) or contact local emergency services (911). You do not have to carry this alone.',
       };
     }
   }
@@ -212,7 +212,7 @@ Evaluate if we need another question (max 4 questions total). If enough informat
     const count = conversation.length;
     if (count === 0) {
       return {
-        next_question: 'What is pulling you toward this new path, and what feels most burdensome about staying where you are?',
+        next_question: 'What is drawing you toward this new path, and what feels most frustrating about where you are right now?',
         ready: false,
         question_number: 1,
         context_summary: 'Initial dilemma registered.',
@@ -220,10 +220,10 @@ Evaluate if we need another question (max 4 questions total). If enough informat
       };
     } else if (count === 1) {
       return {
-        next_question: 'What are the real costs—money, time, or relationships—if this voyage meets a storm?',
+        next_question: 'What does the real financial or time runway look like if this transition hits friction?',
         ready: false,
         question_number: 2,
-        context_summary: 'Mortal shared motivations.',
+        context_summary: 'User shared key motivations and pain points.',
         is_emergency: false,
       };
     } else {
@@ -231,7 +231,7 @@ Evaluate if we need another question (max 4 questions total). If enough informat
         next_question: null,
         ready: true,
         question_number: count,
-        context_summary: 'Sufficient context gathered for the Olympian gods to convene.',
+        context_summary: 'Sufficient context gathered for the Council to deliberate.',
         is_emergency: false,
       };
     }
@@ -323,45 +323,45 @@ Generate the debate turns following the prompt rules. Exactly 6 turns total (Ath
           speaker: 'athena',
           addressed_to: 'mortal',
           stance: 'conditional',
-          text: `Cast your gaze ten years ahead, mortal. A hurried leap without strategic purpose is foolishness, but enduring misery is cowardice. Choose the craft that builds your enduring sovereignty.`,
+          text: `Look five years out. A hasty pivot out of short-term frustration destroys compounding leverage. Don't abandon your technical or career footing; steer it toward your deeper strengths.`,
         },
         {
           round: 1,
           speaker: 'poseidon',
           addressed_to: 'athena',
           stance: 'against',
-          text: `Athena whispers of sovereignty while the breakers foam at your ankles! You risk abandoning steady ground for an untamed squall. Have you no respect for the wreckage?`,
+          text: `Athena preaches five-year ideals, but you have real rent, debt, and runway to protect. If you walk away from stability without cash flow, you'll regret the fallout. Protect your downside first.`,
         },
         {
           round: 1,
           speaker: 'hermes',
           addressed_to: 'poseidon',
           stance: 'conditional',
-          text: `Must every voyage end in drowning, uncle? The mortal does not have to burn the harbor! Run a swift scouting run: take one small step, keep one foot dry.`,
+          text: `Why treat this like a trap with only two doors? Run a 30-day pilot: keep your day-to-day footing, test the new path in evenings, and get real data before committing.`,
         },
         {
           round: 2,
           speaker: 'athena',
           addressed_to: 'hermes',
           stance: 'for',
-          text: `Hermes names the discipline of reconnaissance. Test the winds with rigorous intention, but do not procrastinate under the guise of moderation. Act with resolve.`,
+          text: `Hermes is right on testing. Run a disciplined reconnaissance, but don't use moderation as an excuse for indecision. Test with purpose, then commit.`,
         },
         {
           round: 2,
           speaker: 'poseidon',
           addressed_to: 'athena',
           stance: 'against',
-          text: `Test the winds? One misstep in a storm and your mast splits! Mark my warning: when debt or regret drags you under, divine philosophy will not buy bread.`,
+          text: `Testing is fine, but set a hard financial ceiling. If your side experiment bleeds your core focus or savings, cut it loose. Hope is not an operational strategy.`,
         },
         {
           round: 2,
           speaker: 'hermes',
           addressed_to: 'mortal',
           stance: 'conditional',
-          text: `Heed both the spear and the storm. Set a firm trial for three moons. If fortune smiles, advance; if the abyss opens, slip back through the side door!`,
+          text: `Exactly. Set a 90-day checkpoint. If you get real traction, scale up; if not, you pivot back with zero permanent damage. Keep your options open.`,
         },
       ],
-      debate_dynamic: 'Athena demands long-term courage; Poseidon warns of ruin; Hermes plots a low-risk trial.',
+      debate_dynamic: 'Athena emphasizes multi-year compounding; Poseidon stresses runway and financial defense; Hermes designs a low-friction pilot.',
     };
   }
 }
@@ -450,24 +450,24 @@ Deliver the final verdict as ODYSSEUS, survivor of the Trojan War and wanderer o
     }
 
     return {
-      recommendation: 'Do not burn your existing ship out of fatigue, but immediately chart a measured trial before committing all your sails.',
+      recommendation: 'Do not make an irreversible leap right now. Instead, maintain your primary footing while launching a structured, low-risk test of the alternative.',
       confidence: 'medium',
-      confidence_reason: 'You possess real momentum where you stand, yet the friction in your spirit cannot be ignored indefinitely without rotting your timber.',
+      confidence_reason: 'You possess real momentum where you stand, but the friction you feel will continue to compound unless you systematically test this new direction.',
       summary_by_god: {
-        athena: 'Reminded you to weigh a decade of mastery over a month of fleeting impulse.',
-        poseidon: 'Rightly exposed the cold rocks of financial loss and irreversible sunk effort.',
-        hermes: 'Offered the cunning path: run an inexpensive reconnaissance project before declaring allegiance.',
+        athena: 'Reminded you to optimize for multi-year leverage rather than reacting to short-term fatigue.',
+        poseidon: 'Accurately identified the immediate downside of burning through savings or stability.',
+        hermes: 'Designed the practical middle path: an inexpensive pilot project before declaring allegiance.',
       },
-      biggest_risk: 'Drifting in indecision until circumstances force a desperate, uncalculated leap.',
+      biggest_risk: 'Drifting in indecision until external pressure forces an uncalculated reaction.',
       next_steps: [
-        'Within 48 hours: Execute one low-cost, concrete test of your desired path.',
-        'Within 14 days: Establish a firm numerical threshold (financial or academic) that dictates go/no-go.',
-        'At the 60-day mark: Review outcomes with a trusted mentor and either commit fully or seal the hatch.',
+        'Within 48 hours: Outline one low-friction, concrete experiment you can run over the next two weeks.',
+        'Within 14 days: Set clear go/no-go quantitative metrics (financial runway or milestone-based).',
+        'At the 60-day mark: Review the outcomes with a trusted mentor and either fully pivot or close the door.',
       ],
       unresolved_questions: [
-        'Are you fleeing from temporary discomfort, or steering toward authentic mastery?',
+        'Are you running away from temporary discomfort, or steering toward authentic long-term mastery?',
       ],
-      closing_word: 'Keep both hands upon the oars. Ithaca was not reached in calm waters.',
+      closing_word: 'Keep both hands on the rudder. Steady execution beats romantic impulse.',
     };
   }
 }
@@ -479,9 +479,9 @@ export async function callGodBluff({ speaker, stance, argument, dilemma, customA
   const apiKey = customApiKey || process.env.GEMINI_API_KEY;
 
   const userPrompt = `
-The mortal has called ${speaker.toUpperCase()}'s bluff on their stance: "${argument}".
-Mortal dilemma: "${dilemma}".
-As ${speaker.toUpperCase()}, defend your position or concede with sharp divine nuance. Max 35 words.
+The user has challenged ${speaker.toUpperCase()}'s argument: "${argument}".
+Dilemma: "${dilemma}".
+As ${speaker.toUpperCase()}, defend your position or concede with sharp nuance in concise modern English. Max 35 words.
   `.trim();
 
   const schema = {
@@ -506,19 +506,19 @@ As ${speaker.toUpperCase()}, defend your position or concede with sharp divine n
     if (speaker === 'poseidon') {
       return {
         speaker: 'poseidon',
-        text: 'Call my warning a bluff if you dare, mortal! But when the squall tears your rigging, remember: the sea does not negotiate with optimism.',
+        text: 'Call it caution if you want, but when your runway runs dry, enthusiasm won\'t pay the bills. Respect the downside.',
         stance: 'against',
       };
     } else if (speaker === 'athena') {
       return {
         speaker: 'athena',
-        text: 'A strategist welcomes scrutiny. If you doubt the ten-year horizon, look at those who settled for easy comforts and died forgotten.',
+        text: 'Scrutiny is part of good strategy. If you doubt the five-year view, show me how your short-term pivot compounds into long-term leverage.',
         stance: 'for',
       };
     } else {
       return {
         speaker: 'hermes',
-        text: 'Bluff? A trickster never bluffs; he simply plays two games at once while you fret over a single chessboard. Try the shortcut!',
+        text: 'I am not bluffing; I am giving you an exit ramp. Why bet the entire farm when you can hedge and win either way?',
         stance: 'conditional',
       };
     }

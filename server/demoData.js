@@ -1,91 +1,91 @@
 /**
  * Fail-Proof Cached Demo Data for Hackathon Presentations
- * Guaranteed path if WiFi, Gemini API, or ElevenLabs API is down or slow.
+ * Natural, concise modern English with subtle Homeric touches.
  */
 
 export const DEMO_DILEMMA = {
   id: "major-change",
   title: "Should I change my major from Computer Science to Philosophy & Writing?",
-  dilemma: "I am a sophomore studying Computer Science. I feel drained by coding assignments and drawn toward philosophy, ethics, and creative writing. But I worry about debt, job prospects, and disappointing my parents.",
+  dilemma: "I'm a sophomore studying Computer Science. I feel burned out by coding assignments and drawn toward philosophy, ethics, and creative writing. But I worry about debt, job prospects, and disappointing my parents.",
   answers: [
     {
-      question: "What is pulling you toward philosophy and creative writing, and what makes computer science feel draining?",
-      answer: "I love exploring human meaning, ethics of technology, and storytelling. In CS, I feel like I'm just memorizing syntax for leetcode rather than thinking deeply."
+      question: "What is pulling you toward philosophy and writing, and what makes CS feel draining?",
+      answer: "I love exploring ethics, tech policy, and storytelling. In CS, I feel like I'm just memorizing syntax for leetcode rather than thinking deeply."
     },
     {
-      question: "What are the real financial anchors—how much debt or sunk tuition are we weighing here?",
-      answer: "I have about two years of credits done and 15k in student loans. My parents are helping with tuition as long as they believe I can support myself after graduation."
+      question: "What are the real financial stakes—how much debt or sunk tuition are we weighing here?",
+      answer: "I have two years completed and $15,000 in student loans. My parents cover remaining tuition as long as they believe I can support myself after college."
     },
     {
-      question: "How have you tested this new waters beyond personal fascination?",
-      answer: "I took one philosophy seminar and received an A, and I write for the student literary journal on weekends."
+      question: "How have you tested this new path so far?",
+      answer: "I took one philosophy seminar and earned an A, and I write for the student literary journal on weekends."
     }
   ],
-  context_summary: "A second-year student torn between technical stability (CS) and intellectual passion (Philosophy/Writing), carrying $15k debt and parental expectations.",
+  context_summary: "A second-year student torn between technical stability (CS) and intellectual craft (Philosophy/Writing), carrying $15k debt and parental expectations.",
   turns: [
     {
       round: 1,
       speaker: "athena",
       addressed_to: "mortal",
       stance: "conditional",
-      text: "Look ten years ahead, mortal. Pure philosophy without technical leverage leaves your spear blunt in the coming age. Master the machine, then command its soul."
+      text: "Look five years down the road. Throwing away a technical foundation out of temporary burnout destroys compounding leverage. Keep your technical core, but steer it toward ethics and writing."
     },
     {
       round: 1,
       speaker: "poseidon",
       addressed_to: "athena",
       stance: "against",
-      text: "Athena preaches lofty temples while fifteen thousand in debt already drags you into the depths! Abandon the craft now, and your parents' harbor will slam shut."
+      text: "Athena loves five-year theories, but you have fifteen grand in debt and your parents are paying tuition. Walk away from CS now, and your financial harbor slams shut. Don't romanticize getting shipwrecked."
     },
     {
       round: 1,
       speaker: "hermes",
       addressed_to: "poseidon",
       stance: "conditional",
-      text: "Peace, uncle of storms! Why must this mortal drown in either ocean? Keep the CS hull intact, but take philosophy as a minor or pivot into tech policy!"
+      text: "You two are treating this like an all-or-nothing trap. Keep CS on paper, declare a philosophy minor, and write on weekends. Test the waters before making an irreversible jump."
     },
     {
       round: 2,
       speaker: "athena",
       addressed_to: "hermes",
       stance: "for",
-      text: "Hermes speaks true cunning. The greatest minds do not flee the loom; they weave code and ethics together. A dual path yields supreme leverage."
+      text: "Hermes is right on strategy. The highest leverage doesn't come from abandoning the machine; it comes from marrying software with deep human judgment. A dual focus makes you indispensable."
     },
     {
       round: 2,
       speaker: "poseidon",
       addressed_to: "athena",
       stance: "against",
-      text: "A dual path is twice the burden in a squall! If you drop your guard in algorithms, you will graduate shipwrecked with an empty purse."
+      text: "A dual focus is twice the weight in rough water. If core algorithms are already draining you, extra essay deadlines will break your back. Guard your GPA before taking on more cargo."
     },
     {
       round: 2,
       speaker: "hermes",
       addressed_to: "mortal",
       stance: "conditional",
-      text: "Do not throw your ship against the rocks today. Build one philosophy project that analyzes AI ethics this term. Test the wind before unfurling the main sail!"
+      text: "Run a one-semester experiment. Talk to your advisor this week, take one tech ethics seminar, and build a writing portfolio. Give yourself data before making any irreversible declaration."
     }
   ],
-  debate_dynamic: "Athena advocates dual mastery; Poseidon warns of debt and shipwreck; Hermes uncovers an agile compromise.",
+  debate_dynamic: "Athena advises long-term technical leverage; Poseidon warns of debt and parental friction; Hermes designs an agile low-risk trial.",
   verdict: {
-    recommendation: "Do not burn your technical ship, but hoist a philosophical sail: declare a minor in philosophy or an interdisciplinary focus on tech ethics, rather than dropping CS.",
+    recommendation: "Do not drop Computer Science. Instead, declare a formal minor in Philosophy or Tech Ethics. Complete your technical degree while building a specialized portfolio in AI ethics and writing.",
     confidence: "high",
-    confidence_reason: "You are already halfway through the degree with manageable debt; abandoning CS now creates maximum friction, whereas combining them creates a rare, sought-after specialty.",
+    confidence_reason: "You are already halfway to the finish line with manageable debt. Abandoning CS now maximizes career and financial friction, whereas combining both disciplines creates a rare, defensible niche.",
     summary_by_god: {
-      athena: "Advised long-term synthesis: mastering technical fundamentals while sharpening ethical reasoning for ten-year mastery.",
-      poseidon: "Rightly warned of the sudden undertow: $15,000 debt and strained family support if you abandon your vocational footing.",
-      hermes: "Found the clever channel: keep the primary degree, test elective waters, and package yourself as a bridge between technology and humanity."
+      athena: "Advised long-term compounding: pairing technical competence with ethical reasoning rather than starting from scratch.",
+      poseidon: "Rightly highlighted the immediate undertow: $15,000 in loans and the critical risk of losing parental financial backing.",
+      hermes: "Identified the optimal path: retain the primary degree, test electives, and use low-cost side projects to prove traction."
     },
-    biggest_risk: "Becoming paralyzed in mediocre CS grades due to burnout while avoiding the hard work of building a standout portfolio.",
+    biggest_risk: "Letting burnout lead to a slide in your core GPA while avoiding the discipline needed to build a standout writing portfolio.",
     next_steps: [
-      "Within 48 hours: Schedule an academic advisor appointment to map a Philosophy/Ethics minor alongside your remaining CS requirements.",
-      "This week: Have an honest, grounded talk with your parents showing how an interdisciplinary focus enhances rather than threatens job prospects.",
-      "This semester: Complete one public writing or ethics project analyzing an emerging technology issue to validate your conviction."
+      "Within 48 hours: Meet with your academic advisor to map out a Philosophy or Ethics minor alongside your remaining CS credits.",
+      "This week: Have an honest, structured conversation with your parents showing how combining tech and policy strengthens your career outlook.",
+      "This semester: Complete one published writing piece or case study analyzing an emerging technology dilemma to validate your conviction."
     ],
     unresolved_questions: [
-      "Are you truly exhausted by technology, or simply exhausted by how introductory courses are taught?"
+      "Are you genuinely exhausted by technology, or simply exhausted by the way introductory courses are taught?"
     ],
-    closing_word: "Hold the rudder firm. The sea rewards those who navigate between Scylla and Charybdis."
+    closing_word: "Navigate between Scylla and Charybdis. Keep a steady hand on the rudder."
   }
 };
 
@@ -98,14 +98,14 @@ export const ALTERNATE_DEMO_DILEMMAS = [
   },
   {
     id: "relocation",
-    title: "Moving Across the Country for Love",
+    title: "Relocating for a Relationship",
     dilemma: "My partner got accepted to medical school in Chicago. I love my hometown and close-knit family, but our relationship is 4 years strong. Should I move?",
     summary: "Long-term relationship commitment vs roots and personal comfort zone."
   },
   {
     id: "quit-job",
-    title: "Quitting Job to Build a Solopreneur App",
-    dilemma: "I have 6 months of savings and a working MVP app with 200 free users. My boss just offered me a promotion, but I desperately want to work for myself.",
+    title: "Leaving Full-Time Job for Indie App",
+    dilemma: "I have 6 months of savings and a working MVP app with 200 free users. My boss offered a promotion, but I desperately want to work for myself.",
     summary: "Runway risk vs entrepreneurial freedom."
   }
 ];

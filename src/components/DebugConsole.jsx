@@ -32,56 +32,56 @@ export default function DebugConsole({ isOpen = false, onClose }) {
   });
 
   const levelBadges = {
-    SUCCESS: { bg: 'bg-[#1F5C66]', text: 'text-[#C1DDD0]', icon: CheckCircle },
-    INFO: { bg: 'bg-[#12233F]', text: 'text-[#DDD3C8]', icon: Info },
-    WARN: { bg: 'bg-[#C86B18]/40', text: 'text-[#FFA959]', icon: AlertTriangle },
-    ERROR: { bg: 'bg-[#9B3B33]', text: 'text-[#FDF4CC]', icon: AlertCircle },
+    SUCCESS: { bg: 'bg-emerald-950/60', text: 'text-emerald-300', icon: CheckCircle },
+    INFO: { bg: 'bg-slate-850', text: 'text-slate-300', icon: Info },
+    WARN: { bg: 'bg-amber-950/60', text: 'text-amber-300', icon: AlertTriangle },
+    ERROR: { bg: 'bg-rose-950/60', text: 'text-rose-300', icon: AlertCircle },
   };
 
   return (
-    <div className="fixed inset-y-0 right-0 z-50 w-full sm:w-[480px] bg-[#1B1B16] border-l-2 border-[#EE8A2E] shadow-2xl flex flex-col select-none animate-slideLeft">
+    <div className="fixed inset-y-0 right-0 z-50 w-full sm:w-[480px] bg-[#0A0F1D]/95 backdrop-blur-xl border-l border-white/10 shadow-2xl flex flex-col select-none animate-slide-up">
       {/* Header */}
-      <div className="p-4 bg-[#12233F] border-b border-[#EE8A2E]/30 flex items-center justify-between">
-        <div className="flex items-center gap-2 text-[#EE8A2E]">
-          <Terminal size={18} />
-          <h3 className="font-heading text-lg font-bold tracking-wider">
-            Olympian Telemetry & Logs
+      <div className="p-4 bg-slate-900/80 border-b border-white/10 flex items-center justify-between">
+        <div className="flex items-center gap-2 text-slate-100">
+          <Terminal size={17} className="text-[#D97746]" />
+          <h3 className="font-heading text-base font-bold">
+            Telemetry & Server Stream
           </h3>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           <button
             onClick={fetchLogs}
             title="Refresh logs"
-            className="p-1 rounded text-[#DDD3C8] hover:text-[#EE8A2E] transition"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
           >
-            <RefreshCw size={16} />
+            <RefreshCw size={15} />
           </button>
           <button
             onClick={onClose}
-            className="p-1 rounded text-[#DDD3C8] hover:text-[#EE8A2E] transition"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
           >
-            <X size={18} />
+            <X size={17} />
           </button>
         </div>
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex items-center gap-1.5 p-2 bg-[#1B1B16] border-b border-[#EE8A2E]/20 text-[11px] font-serif uppercase">
+      <div className="flex items-center gap-1.5 p-2.5 bg-slate-900/40 border-b border-white/5 text-[11px] font-sans">
         {['ALL', 'SUCCESS', 'INFO', 'WARN', 'ERROR'].map((lvl) => (
           <button
             key={lvl}
             onClick={() => setFilter(lvl)}
-            className={`px-2.5 py-1 rounded transition-all font-bold ${
+            className={`px-2.5 py-1 rounded-lg transition-all font-medium ${
               filter === lvl
-                ? 'bg-[#EE8A2E] text-[#12233F]'
-                : 'bg-[#12233F]/70 text-[#DDD3C8] hover:text-[#EE8A2E]'
+                ? 'bg-[#D97746] text-[#0A0F1D] font-bold'
+                : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
             }`}
           >
             {lvl}
           </button>
         ))}
-        <span className="ml-auto text-[10px] text-[#DDD3C8]/60 font-mono">
+        <span className="ml-auto text-[10px] text-slate-500 font-mono">
           {filteredLogs.length} events
         </span>
       </div>
@@ -89,8 +89,8 @@ export default function DebugConsole({ isOpen = false, onClose }) {
       {/* Logs List */}
       <div className="flex-1 overflow-y-auto p-3 space-y-2 font-mono text-xs">
         {filteredLogs.length === 0 ? (
-          <div className="p-6 text-center text-[#DDD3C8]/50 italic">
-            No divine events recorded yet...
+          <div className="p-8 text-center text-slate-500 italic font-sans">
+            No telemetry recorded yet...
           </div>
         ) : (
           filteredLogs.map((log, idx) => {
@@ -101,40 +101,40 @@ export default function DebugConsole({ isOpen = false, onClose }) {
             return (
               <div
                 key={idx}
-                className="p-2.5 rounded-lg bg-[#12233F]/60 border border-[#EE8A2E]/15 hover:border-[#EE8A2E]/40 transition"
+                className="p-2.5 rounded-xl bg-slate-900/60 border border-white/5 hover:border-white/10 transition"
               >
                 <div
                   className="flex items-start justify-between gap-2 cursor-pointer"
                   onClick={() => setExpandedIdx(isExpanded ? null : idx)}
                 >
-                  <div className="flex items-center gap-1.5 flex-wrap">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <span
                       className={`px-1.5 py-0.5 rounded text-[10px] font-bold uppercase flex items-center gap-1 ${badge.bg} ${badge.text}`}
                     >
                       <Icon size={10} />
                       {log.level}
                     </span>
-                    <span className="text-[#EE8A2E] font-semibold">
+                    <span className="text-[#D97746] font-semibold">
                       [{log.category}]
                     </span>
-                    <span className="text-[#FDF4CC] break-all">
+                    <span className="text-slate-200 break-all font-sans">
                       {log.message}
                     </span>
                   </div>
 
-                  <div className="shrink-0 flex items-center text-[#DDD3C8]/50">
-                    <span className="text-[10px] mr-1">
+                  <div className="shrink-0 flex items-center text-slate-500 text-[10px]">
+                    <span className="mr-1">
                       {new Date(log.timestamp).toLocaleTimeString()}
                     </span>
                     {log.details && (
-                      isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />
+                      isExpanded ? <ChevronDown size={13} /> : <ChevronRight size={13} />
                     )}
                   </div>
                 </div>
 
-                {/* Expandable Details */}
+                {/* Details */}
                 {isExpanded && log.details && (
-                  <div className="mt-2 pt-2 border-t border-[#EE8A2E]/20 text-[11px] text-[#C1DDD0] bg-[#1B1B16] p-2 rounded overflow-x-auto whitespace-pre-wrap">
+                  <div className="mt-2 pt-2 border-t border-white/5 text-[11px] text-slate-300 bg-slate-950 p-2.5 rounded-lg overflow-x-auto whitespace-pre-wrap">
                     {log.details}
                   </div>
                 )}
@@ -144,9 +144,8 @@ export default function DebugConsole({ isOpen = false, onClose }) {
         )}
       </div>
 
-      {/* Footer Info */}
-      <div className="p-2.5 bg-[#12233F] border-t border-[#EE8A2E]/30 text-[10px] text-[#DDD3C8]/70 text-center font-serif">
-        Live telemetry stream for HackUTA 2026 judges & developers.
+      <div className="p-2.5 bg-slate-900 border-t border-white/10 text-[10px] text-slate-400 text-center font-sans">
+        Real-time server & model event telemetry.
       </div>
     </div>
   );

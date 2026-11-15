@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import StarBackground from './components/StarBackground.jsx';
 import WaveFooter from './components/WaveFooter.jsx';
-import GreekMeander from './components/GreekMeander.jsx';
 import IntakeOracle from './components/IntakeOracle.jsx';
 import CouncilStage from './components/CouncilStage.jsx';
 import SubtitleBar from './components/SubtitleBar.jsx';
@@ -21,13 +20,10 @@ import {
 } from './services/api.js';
 
 import {
-  Sparkles,
   Volume2,
   VolumeX,
   Settings,
   Terminal,
-  Play,
-  RotateCcw,
   Zap,
 } from 'lucide-react';
 
@@ -38,10 +34,9 @@ const STAGES = {
 };
 
 export default function App() {
-  // Navigation & State
   const [currentStage, setCurrentStage] = useState(STAGES.INTAKE);
   const [dilemma, setDilemma] = useState('');
-  const [conversation, setConversation] = useState([]); // Q&A array
+  const [conversation, setConversation] = useState([]);
   const [currentOracleQuestion, setCurrentOracleQuestion] = useState(null);
   const [emergencyData, setEmergencyData] = useState(null);
 
@@ -55,9 +50,9 @@ export default function App() {
   // Verdict State
   const [verdict, setVerdict] = useState(null);
 
-  // Loading & Modals
+  // UI State
   const [isLoading, setIsLoading] = useState(false);
-  const [loadingText, setLoadingText] = useState('The gods deliberate...');
+  const [loadingText, setLoadingText] = useState('Deliberating opposing perspectives...');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isDebugOpen, setIsDebugOpen] = useState(false);
 
@@ -73,11 +68,9 @@ export default function App() {
     skipNext,
     toggleMute,
     resetQueue,
-    setCurrentTurnIndex,
   } = useAudioQueue({
     turns,
     onAllTurnsComplete: () => {
-      // When debate turns naturally finish, transition to verdict
       handleFetchVerdict();
     },
   });
@@ -90,13 +83,10 @@ export default function App() {
     },
   });
 
-  /**
-   * Handle user submitting their core dilemma
-   */
   const handleSubmitDilemma = async (text) => {
     setDilemma(text);
     setIsLoading(true);
-    setLoadingText('Consulting the Delphic Oracle...');
+    setLoadingText('Consulting the Council...');
 
     try {
       const res = await postIntake({
@@ -111,22 +101,18 @@ export default function App() {
       }
 
       if (res.ready || !res.next_question) {
-        // Sufficient context already, proceed to debate
         await initiateDebate(text, []);
       } else {
         setCurrentOracleQuestion(res.next_question);
       }
     } catch (err) {
       console.error('Intake error:', err);
-      setCurrentOracleQuestion('What is pulling you toward this path, and what are the true costs?');
+      setCurrentOracleQuestion('What is drawing you toward this change, and what feels most frustrating about where you are?');
     } finally {
       setIsLoading(false);
     }
   };
 
-  /**
-   * Handle user answering an Oracle follow-up question
-   */
   const handleSubmitAnswer = async (answerText) => {
     const updatedConversation = [
       ...conversation,
@@ -134,7 +120,7 @@ export default function App() {
     ];
     setConversation(updatedConversation);
     setIsLoading(true);
-    setLoadingText('The Oracle weighs your truth...');
+    setLoadingText('Synthesizing your input...');
 
     try {
       const res = await postIntake({
@@ -149,7 +135,6 @@ export default function App() {
       }
 
       if (res.ready || !res.next_question || updatedConversation.length >= 4) {
-        // Ready for Council Debate!
         await initiateDebate(dilemma, updatedConversation);
       } else {
         setCurrentOracleQuestion(res.next_question);
@@ -162,19 +147,13 @@ export default function App() {
     }
   };
 
-  /**
-   * Directly proceed to Council without further questions
-   */
   const handleProceedToCouncilDirect = async () => {
     await initiateDebate(dilemma, conversation);
   };
 
-  /**
-   * Start the 3-gods debate
-   */
   const initiateDebate = async (dilemmaText, answersList) => {
     setIsLoading(true);
-    setLoadingText('Summoning Athena, Poseidon, and Hermes to Olympus...');
+    setLoadingText('Convening Athena, Poseidon, and Hermes...');
 
     try {
       const debateRes = await postDebate({
@@ -185,11 +164,10 @@ export default function App() {
       });
 
       setTurns(debateRes.turns || []);
-      setDebateDynamic(debateRes.debate_dynamic || 'Athena, Poseidon, and Hermes dispute the mortal course.');
+      setDebateDynamic(debateRes.debate_dynamic || 'Athena, Poseidon, and Hermes dispute the optimal course.');
       setCurrentStage(STAGES.DEBATE);
       resetQueue();
-      // Auto-start playback
-      setTimeout(() => startPlayback(), 600);
+      setTimeout(() => startPlayback(), 500);
     } catch (err) {
       console.error('Debate generation error:', err);
     } finally {
@@ -197,12 +175,9 @@ export default function App() {
     }
   };
 
-  /**
-   * Interject mid-debate ("Speak, mortal")
-   */
   const handleInterjectionSubmit = async (interjectionText) => {
     setIsLoading(true);
-    setLoadingText('The Olympian gods turn to face the mortal...');
+    setLoadingText('The Council evaluates your interjection...');
     setInterjections((prev) => [...prev, interjectionText]);
 
     try {
@@ -214,7 +189,6 @@ export default function App() {
         debateSoFar: remainingTurns,
       });
 
-      // Append new adapted turns
       const adaptedTurns = debateRes.turns || [];
       const combinedTurns = [...remainingTurns, ...adaptedTurns];
       setTurns(combinedTurns);
@@ -222,7 +196,6 @@ export default function App() {
         setDebateDynamic(debateRes.debate_dynamic);
       }
       setIsInterjectOpen(false);
-      // Resume playback on next turn
       skipNext();
       startPlayback();
     } catch (err) {
@@ -233,9 +206,6 @@ export default function App() {
     }
   };
 
-  /**
-   * Challenge / Call Bluff on a God
-   */
   const handleChallengeGod = async (speaker) => {
     setIsChallenging(true);
     const activeTurn = turns[currentTurnIndex] || {};
@@ -244,11 +214,10 @@ export default function App() {
       const rebuttal = await postChallengeBluff({
         speaker,
         stance: activeTurn.stance || 'against',
-        argument: activeTurn.text || 'Beware the storm',
+        argument: activeTurn.text || 'Guard the downside',
         dilemma,
       });
 
-      // Insert rebuttal immediately after current turn
       const newTurns = [...turns];
       newTurns.splice(currentTurnIndex + 1, 0, {
         round: activeTurn.round || 1,
@@ -268,12 +237,9 @@ export default function App() {
     }
   };
 
-  /**
-   * Fetch and display Odysseus' Verdict
-   */
   const handleFetchVerdict = async () => {
     setIsLoading(true);
-    setLoadingText('Odysseus, King of Ithaca, takes the council floor...');
+    setLoadingText('Synthesizing Odysseus\' final ruling...');
     pausePlayback();
 
     try {
@@ -293,12 +259,9 @@ export default function App() {
     }
   };
 
-  /**
-   * Load Pre-Generated Demo Dilemma (Guaranteed fail-proof demo path for judges!)
-   */
   const handleLoadDemoDilemma = async () => {
     setIsLoading(true);
-    setLoadingText('Loading Olympus Demo Scenario: Major Crossroads...');
+    setLoadingText('Loading dilemma: Computer Science vs Philosophy & Writing...');
 
     try {
       const data = await getDemoData();
@@ -318,9 +281,6 @@ export default function App() {
     }
   };
 
-  /**
-   * Reset / Start New Consultation
-   */
   const handleReset = () => {
     resetQueue();
     setCurrentStage(STAGES.INTAKE);
@@ -333,9 +293,6 @@ export default function App() {
     setEmergencyData(null);
   };
 
-  /**
-   * Replay Debate
-   */
   const handleReplayDebate = () => {
     setCurrentStage(STAGES.DEBATE);
     resetQueue();
@@ -343,84 +300,87 @@ export default function App() {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col justify-between selection:bg-[#EE8A2E] selection:text-[#12233F] grain-overlay">
-      {/* Background Starfield and Clouds */}
+    <div className="relative min-h-screen flex flex-col justify-between selection:bg-[#D97746] selection:text-[#0A0F1D] grain-overlay">
       <StarBackground />
 
-      {/* TOP HEADER / APP BAR */}
-      <header className="relative z-40 w-full bg-[#12233F]/90 backdrop-blur-md border-b-2 border-[#EE8A2E]/40 px-4 py-3 select-none">
+      {/* REFINED EDITORIAL APP BAR */}
+      <header className="relative z-40 w-full bg-[#0A0F1D]/80 backdrop-blur-md border-b border-white/5 px-4 sm:px-6 py-3.5 select-none">
         <div className="max-w-6xl mx-auto flex items-center justify-between gap-3">
-          {/* Logo & Homeric Title */}
+          {/* Logo & Brand Title */}
           <div
             onClick={handleReset}
-            className="flex items-center gap-2.5 cursor-pointer group"
+            className="flex items-center gap-3 cursor-pointer group"
           >
-            <div className="w-8 h-8 rounded-full bg-[#EE8A2E] flex items-center justify-center text-[#12233F] font-heading font-black shadow-md group-hover:scale-105 transition">
-              🏛️
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-[#D97746] to-[#E89162] flex items-center justify-center text-[#0A0F1D] font-display font-bold text-xs shadow-sm">
+              Ω
             </div>
-            <div>
-              <h1 className="font-heading text-lg sm:text-2xl font-bold tracking-wider text-[#EE8A2E] group-hover:text-[#FFA959] transition glow-orange">
+            <div className="flex items-center gap-2.5">
+              <h1 className="font-display text-sm sm:text-base font-bold tracking-widest text-slate-100 group-hover:text-[#D97746] transition-colors">
                 THE COUNCIL OF OLYMPUS
               </h1>
-              <p className="text-[10px] sm:text-xs font-serif text-[#DDD3C8] tracking-widest uppercase">
-                HackUTA 2026 • Homeric Decision Engine
-              </p>
+              <span className="hidden md:inline-block text-[10px] font-sans font-medium px-2 py-0.5 rounded-full bg-slate-800/80 text-slate-400 border border-white/5">
+                Strategic Decision Architecture
+              </span>
             </div>
           </div>
 
-          {/* Right Action Icons & Demo Button */}
-          <div className="flex items-center gap-2 sm:gap-3">
-            {/* Quick Demo Button for Judges */}
+          {/* Actions & Utilities */}
+          <div className="flex items-center gap-2 sm:gap-2.5">
+            {/* Quick Demo Button */}
             <button
               onClick={handleLoadDemoDilemma}
-              title="One-click fail-proof demo scenario (Major dilemma)"
-              className="px-3 py-1.5 rounded-lg bg-[#EE8A2E] hover:bg-[#FFA959] text-[#12233F] text-xs font-heading font-black tracking-wider uppercase border border-[#EE8A2E] transition-all flex items-center gap-1.5 shadow-md hover:scale-105 active:scale-95"
+              title="Load sample dilemma"
+              className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-sans font-medium border border-white/10 transition-all flex items-center gap-1.5"
             >
-              <Zap size={14} className="fill-[#12233F]" />
-              <span className="hidden sm:inline">Demo Dilemma</span>
+              <Zap size={13} className="text-[#D97746]" />
+              <span className="hidden sm:inline">Sample Dilemma</span>
             </button>
 
-            {/* Audio Mute/Unmute */}
+            {/* Audio Mute */}
             <button
               onClick={toggleMute}
               title={isMuted ? 'Unmute Audio' : 'Mute Audio'}
-              className="p-2 rounded-lg bg-[#1B1B16] hover:bg-[#12233F] text-[#DDD3C8] hover:text-[#EE8A2E] border border-[#EE8A2E]/30 transition"
+              className={`p-2 rounded-xl border transition ${
+                isMuted
+                  ? 'bg-rose-950/40 text-rose-300 border-rose-500/30'
+                  : 'bg-slate-800/60 text-slate-400 hover:text-white border-white/10'
+              }`}
             >
-              {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+              {isMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
             </button>
 
-            {/* Debug Console Logs */}
+            {/* Telemetry Stream */}
             <button
               onClick={() => setIsDebugOpen(true)}
-              title="View live server telemetry and logs"
-              className="p-2 rounded-lg bg-[#1B1B16] hover:bg-[#12233F] text-[#DDD3C8] hover:text-[#EE8A2E] border border-[#EE8A2E]/30 transition"
+              title="Telemetry & Logs"
+              className="p-2 rounded-xl bg-slate-800/60 hover:bg-slate-800 text-slate-400 hover:text-white border border-white/10 transition"
             >
-              <Terminal size={16} />
+              <Terminal size={15} />
             </button>
 
-            {/* Settings Modal */}
+            {/* Settings */}
             <button
               onClick={() => setIsSettingsOpen(true)}
-              title="Settings & API Keys"
-              className="p-2 rounded-lg bg-[#1B1B16] hover:bg-[#12233F] text-[#DDD3C8] hover:text-[#EE8A2E] border border-[#EE8A2E]/30 transition"
+              title="Settings"
+              className="p-2 rounded-xl bg-slate-800/60 hover:bg-slate-800 text-slate-400 hover:text-white border border-white/10 transition"
             >
-              <Settings size={16} />
+              <Settings size={15} />
             </button>
           </div>
         </div>
       </header>
 
-      {/* MAIN CONTENT AREA */}
-      <main className="relative z-20 flex-1 flex flex-col justify-center py-4 sm:py-6">
-        {/* Loading Overlay State */}
+      {/* MAIN VIEWPORT */}
+      <main className="relative z-20 flex-1 flex flex-col justify-center py-6 sm:py-8">
+        {/* Loading Modal */}
         {isLoading && (
-          <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm select-none">
-            <div className="torn-panel p-6 sm:p-8 rounded-2xl max-w-sm text-center border-2 border-[#EE8A2E] shadow-2xl">
-              <div className="w-12 h-12 mx-auto mb-4 border-4 border-[#EE8A2E] border-t-transparent rounded-full animate-spin" />
-              <h3 className="font-heading text-lg font-bold text-[#EE8A2E] tracking-wider mb-2 glow-orange">
-                The Gods Deliberate
+          <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/60 backdrop-blur-md select-none animate-fade-in">
+            <div className="editorial-card p-6 sm:p-8 rounded-2xl max-w-sm text-center shadow-2xl">
+              <div className="w-8 h-8 mx-auto mb-4 border-2 border-[#D97746] border-t-transparent rounded-full animate-spin" />
+              <h3 className="font-heading text-lg font-bold text-slate-100 mb-1">
+                The Council Deliberates
               </h3>
-              <p className="text-xs sm:text-sm font-serif text-[#DDD3C8]">
+              <p className="text-xs font-sans text-slate-400">
                 {loadingText}
               </p>
             </div>
@@ -440,9 +400,7 @@ export default function App() {
             onSubmitAnswer={handleSubmitAnswer}
             onProceedToCouncil={handleProceedToCouncilDirect}
             onStartVoiceInput={() => {
-              setSpeechTargetCallback((transcript) => {
-                // updates will flow into input
-              });
+              setSpeechTargetCallback(() => {});
               startRecording();
             }}
             onStopVoiceInput={stopRecording}
@@ -452,8 +410,7 @@ export default function App() {
 
         {/* STAGE 2: COUNCIL DEBATE */}
         {currentStage === STAGES.DEBATE && (
-          <div className="w-full flex flex-col gap-4 sm:gap-6">
-            {/* The 3 Gods Stage Flanked by Torches */}
+          <div className="w-full flex flex-col gap-6 sm:gap-8">
             <CouncilStage
               currentSpeaker={currentTurn?.speaker || 'athena'}
               turns={turns}
@@ -463,7 +420,6 @@ export default function App() {
               isChallenging={isChallenging}
             />
 
-            {/* Synchronized Subtitle Bar & Controls */}
             <SubtitleBar
               currentTurn={currentTurn}
               turnIndex={currentTurnIndex}
@@ -491,7 +447,6 @@ export default function App() {
         )}
       </main>
 
-      {/* BOTTOM WAVE FOOTER & DRIFTING SHIP */}
       <WaveFooter isLoading={isLoading} />
 
       {/* MODALS */}
@@ -501,9 +456,7 @@ export default function App() {
         onSubmitInterjection={handleInterjectionSubmit}
         isRecording={isRecording}
         onStartVoiceInput={() => {
-          setSpeechTargetCallback((transcript) => {
-            // updates flow into interjection text
-          });
+          setSpeechTargetCallback(() => {});
           startRecording();
         }}
         onStopVoiceInput={stopRecording}
