@@ -1,22 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import GreekMeander from './GreekMeander.jsx';
 import { Mic, MicOff, AlertTriangle, Compass, Send, Sparkles } from 'lucide-react';
+import { useSpeechRecognition } from '../hooks/useSpeechRecognition.js';
 
 export default function IntakeOracle({
   dilemma = '',
   conversation = [],
   currentQuestion = null,
   isWaiting = false,
-  isRecording = false,
   emergencyData = null,
   onSubmitDilemma,
   onSubmitAnswer,
   onProceedToCouncil,
-  onStartVoiceInput,
-  onStopVoiceInput,
   onSelectSampleDilemma,
 }) {
   const [inputText, setInputText] = useState('');
+  const baseTextRef = useRef('');
+
+  const {
+    isRecording,
+    error: speechError,
+    startRecording,
+    stopRecording,
+  } = useSpeechRecognition({
+    onTranscript: (transcript) => {
+      setInputText(baseTextRef.current ? `${baseTextRef.current} ${transcript}` : transcript);
+    },
+  });
+
+  const handleToggleVoice = () => {
+    if (isRecording) {
+      stopRecording();
+    } else {
+      baseTextRef.current = inputText ? inputText.trim() : '';
+      startRecording();
+    }
+  };
 
   const sampleDilemmas = [
     {
@@ -130,7 +149,7 @@ export default function IntakeOracle({
                 <div className="flex items-center gap-2.5">
                   <button
                     type="button"
-                    onClick={isRecording ? onStopVoiceInput : onStartVoiceInput}
+                    onClick={handleToggleVoice}
                     title={isRecording ? 'Stop Recording' : 'Dictate with microphone'}
                     className={`px-3.5 py-1.5 rounded-full border text-xs transition flex items-center gap-2 ${
                       isRecording
@@ -240,7 +259,7 @@ export default function IntakeOracle({
                   />
                   <button
                     type="button"
-                    onClick={isRecording ? onStopVoiceInput : onStartVoiceInput}
+                    onClick={handleToggleVoice}
                     title={isRecording ? 'Stop Recording' : 'Voice Dictate'}
                     className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#506575] hover:text-[#1a3a52]"
                   >

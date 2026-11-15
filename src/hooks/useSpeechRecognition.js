@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { uploadSpeechToText } from '../services/api.js';
 
 export function useSpeechRecognition({ onTranscript = null } = {}) {
@@ -8,35 +8,46 @@ export function useSpeechRecognition({ onTranscript = null } = {}) {
   const recognitionRef = useRef(null);
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
+  const onTranscriptRef = useRef(onTranscript);
+
+  useEffect(() => {
+    onTranscriptRef.current = onTranscript;
+  }, [onTranscript]);
 
   const startRecording = useCallback(() => {
     setError(null);
 
     // 1. Prefer native browser SpeechRecognition for instant live transcription
     const SpeechRecognition =
-      window.SpeechRecognition || window.webkitSpeechRecognition;
+      typeof window !== 'undefined' &&
+      (window.SpeechRecognition || window.webkitSpeechRecognition);
 
     if (SpeechRecognition) {
       try {
         const recognition = new SpeechRecognition();
-        recognition.continuous = false;
+        recognition.continuous = true;
         recognition.interimResults = true;
         recognition.lang = 'en-US';
 
-        recognition.onstart = () => setIsRecording(true);
+        recognition.onstart = () => {
+          setIsRecording(true);
+        };
 
         recognition.onresult = (event) => {
           let text = '';
           for (let i = 0; i < event.results.length; i++) {
             text += event.results[i][0].transcript;
           }
-          if (onTranscript && text) {
-            onTranscript(text);
+          if (onTranscriptRef.current && text) {
+            onTranscriptRef.current(text);
           }
         };
 
         recognition.onerror = (e) => {
           console.warn('SpeechRecognition error:', e.error);
+          if (e.error === 'not-allowed') {
+            setError('Microphone permission denied.');
+          }
           setIsRecording(false);
         };
 
@@ -53,7 +64,7 @@ export function useSpeechRecognition({ onTranscript = null } = {}) {
     }
 
     // 2. Fallback to MediaRecorder & backend ElevenLabs STT
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    if (typeof navigator !== 'undefined' && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       navigator.mediaDevices
         .getUserMedia({ audio: true })
         .then((stream) => {
@@ -73,8 +84,8 @@ export function useSpeechRecognition({ onTranscript = null } = {}) {
 
             try {
               const res = await uploadSpeechToText(audioBlob);
-              if (res.text && onTranscript) {
-                onTranscript(res.text);
+              if (res.text && onTranscriptRef.current) {
+                onTranscriptRef.current(res.text);
               }
             } catch (err) {
               console.error('STT upload error', err);
@@ -92,15 +103,19 @@ export function useSpeechRecognition({ onTranscript = null } = {}) {
     } else {
       setError('Speech recording is not supported in this browser.');
     }
-  }, [onTranscript]);
+  }, []);
 
   const stopRecording = useCallback(() => {
     if (recognitionRef.current) {
-      recognitionRef.current.stop();
+      try {
+        recognitionRef.current.stop();
+      } catch (e) {}
       recognitionRef.current = null;
     }
     if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
-      mediaRecorderRef.current.stop();
+      try {
+        mediaRecorderRef.current.stop();
+      } catch (e) {}
       mediaRecorderRef.current = null;
     }
     setIsRecording(false);

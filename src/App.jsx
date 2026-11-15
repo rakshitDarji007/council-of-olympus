@@ -10,7 +10,6 @@ import SettingsModal from './components/SettingsModal.jsx';
 import DebugConsole from './components/DebugConsole.jsx';
 
 import { useAudioQueue } from './hooks/useAudioQueue.js';
-import { useSpeechRecognition } from './hooks/useSpeechRecognition.js';
 import {
   postIntake,
   postDebate,
@@ -72,14 +71,6 @@ export default function App() {
     turns,
     onAllTurnsComplete: () => {
       handleFetchVerdict();
-    },
-  });
-
-  // Speech Recognition Hook
-  const [speechTargetCallback, setSpeechTargetCallback] = useState(null);
-  const { isRecording, startRecording, stopRecording } = useSpeechRecognition({
-    onTranscript: (text) => {
-      if (speechTargetCallback) speechTargetCallback(text);
     },
   });
 
@@ -412,16 +403,10 @@ export default function App() {
             conversation={conversation}
             currentQuestion={currentOracleQuestion}
             isWaiting={isLoading}
-            isRecording={isRecording}
             emergencyData={emergencyData}
             onSubmitDilemma={handleSubmitDilemma}
             onSubmitAnswer={handleSubmitAnswer}
             onProceedToCouncil={handleProceedToCouncilDirect}
-            onStartVoiceInput={() => {
-              setSpeechTargetCallback(() => {});
-              startRecording();
-            }}
-            onStopVoiceInput={stopRecording}
             onSelectSampleDilemma={(text) => handleSubmitDilemma(text)}
           />
         )}
@@ -474,12 +459,6 @@ export default function App() {
         isOpen={isInterjectOpen}
         onClose={() => setIsInterjectOpen(false)}
         onSubmitInterjection={handleInterjectionSubmit}
-        isRecording={isRecording}
-        onStartVoiceInput={() => {
-          setSpeechTargetCallback(() => {});
-          startRecording();
-        }}
-        onStopVoiceInput={stopRecording}
         isSubmitting={isLoading}
       />
 

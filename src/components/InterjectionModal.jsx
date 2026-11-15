@@ -1,18 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import GreekMeander from './GreekMeander.jsx';
 import { MessageSquare, Mic, MicOff, X, Send } from 'lucide-react';
+import { useSpeechRecognition } from '../hooks/useSpeechRecognition.js';
 
 export default function InterjectionModal({
   isOpen = false,
   onClose,
   onSubmitInterjection,
-  isRecording = false,
-  onStartVoiceInput,
-  onStopVoiceInput,
   isSubmitting = false,
 }) {
   const [interjectionText, setInterjectionText] = useState('');
   const [targetGod, setTargetGod] = useState('all');
+  const baseTextRef = useRef('');
+
+  const {
+    isRecording,
+    startRecording,
+    stopRecording,
+  } = useSpeechRecognition({
+    onTranscript: (transcript) => {
+      setInterjectionText(baseTextRef.current ? `${baseTextRef.current} ${transcript}` : transcript);
+    },
+  });
+
+  const handleToggleVoice = () => {
+    if (isRecording) {
+      stopRecording();
+    } else {
+      baseTextRef.current = interjectionText ? interjectionText.trim() : '';
+      startRecording();
+    }
+  };
+
+  const handleModalClose = () => {
+    if (isRecording) stopRecording();
+    onClose();
+  };
 
   if (!isOpen) return null;
 
@@ -46,7 +69,7 @@ export default function InterjectionModal({
             </h3>
           </div>
           <button
-            onClick={onClose}
+            onClick={handleModalClose}
             disabled={isSubmitting}
             className="p-1 rounded-full text-[#506575] hover:text-[#1a3a52] hover:bg-[#eee3d2] transition"
           >
@@ -117,7 +140,7 @@ export default function InterjectionModal({
             />
             <button
               type="button"
-              onClick={isRecording ? onStopVoiceInput : onStartVoiceInput}
+              onClick={handleToggleVoice}
               title={isRecording ? 'Stop Recording' : 'Voice Dictate'}
               className="absolute right-3 bottom-3 text-[#506575] hover:text-[#1a3a52]"
             >
