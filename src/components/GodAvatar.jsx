@@ -17,15 +17,15 @@ export default function GodAvatar({
   const normalized = speaker.toLowerCase();
 
   const activeShadowByGod = {
-    athena: '0 0 30px rgba(232, 201, 122, 0.65), 0 0 60px rgba(148, 180, 159, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
-    poseidon: '0 0 30px rgba(74, 144, 188, 0.75), 0 0 60px rgba(48, 88, 115, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
-    hermes: '0 0 30px rgba(212, 114, 87, 0.75), 0 0 60px rgba(232, 201, 122, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
+    athena: '0 0 18px rgba(232, 201, 122, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25)',
+    poseidon: '0 0 18px rgba(140, 161, 170, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25)',
+    hermes: '0 0 18px rgba(180, 101, 77, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25)',
   };
 
   const activeBorderByGod = {
-    athena: '2px solid #e8c97a',
-    poseidon: '2px solid #4a90bc',
-    hermes: '2px solid #d47257',
+    athena: '1.5px solid #e8c97a',
+    poseidon: '1.5px solid #8ca1aa',
+    hermes: '1.5px solid #b4654d',
   };
 
   return (

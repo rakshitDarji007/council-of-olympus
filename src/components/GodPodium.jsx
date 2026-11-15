@@ -1,6 +1,6 @@
 import React from 'react';
 import GodAvatar from './GodAvatar.jsx';
-import { Shield, Anchor, Feather, Swords, Zap } from 'lucide-react';
+import { Shield, Anchor, Feather, Swords } from 'lucide-react';
 
 const GOD_INFO = {
   athena: {
@@ -63,66 +63,29 @@ export default function GodPodium({
 
   return (
     <div
-      className={`absolute top-4 left-1/2 flex flex-col justify-between rounded-3xl p-5 sm:p-6 select-none transition-shadow duration-500 ${slotClass} ${
+      className={`absolute top-4 left-1/2 flex flex-col justify-between rounded-3xl p-5 sm:p-6 select-none transition-all duration-500 ${slotClass} ${
         isActive
-          ? 'odyssey-night-card-active shadow-[0_20px_50px_rgba(4,19,33,0.7)]'
-          : 'odyssey-night-card hover:opacity-100 hover:border-[#ded0bc]/50 cursor-pointer'
+          ? 'odyssey-night-card-active shadow-[0_16px_40px_rgba(4,19,33,0.55)]'
+          : 'odyssey-night-card hover:opacity-100 hover:border-[#ded0bc]/40'
       }`}
       style={{
         width: 'clamp(270px, 80vw, 310px)',
         minHeight: '380px',
       }}
-      onClick={() => {
-        if (!isActive && onInterrupt) {
-          onInterrupt(speaker);
-        }
-      }}
     >
       {/* ====================================================================
-          LUMINOUS BACKLIGHT SIGN AURA (Radiating outward behind the card)
+          SUBTLE AESTHETIC BACKLIGHT AURA (Warm, atmospheric diffusion)
           ==================================================================== */}
       {isActive && (
         <div
-          className={`absolute -inset-4 sm:-inset-6 rounded-[36px] -z-10 pointer-events-none transition-all duration-700 animate-[backlightSignPulse_3s_ease-in-out_infinite] ${
+          className={`absolute -inset-3 sm:-inset-4 rounded-[32px] -z-10 pointer-events-none transition-all duration-700 animate-[backlightSignPulse_3s_ease-in-out_infinite] ${
             normalized === 'athena'
               ? 'backlight-aura-athena'
               : normalized === 'poseidon'
               ? 'backlight-aura-poseidon'
               : 'backlight-aura-hermes'
-          } ${isInterruption ? 'animate-[interruptionShockwave_0.75s_ease-out_forwards]' : ''}`}
-        />
-      )}
-
-      {/* ====================================================================
-          BACKLIT NEON SIGN PLAQUE (Perched on top rim)
-          ==================================================================== */}
-      {isActive ? (
-        <div
-          className={`absolute -top-3.5 left-1/2 -translate-x-1/2 px-3.5 py-1 rounded-full text-[10px] font-mono tracking-[0.2em] uppercase font-bold flex items-center gap-2 shadow-2xl whitespace-nowrap z-40 transition-all duration-300 ${
-            isInterruption
-              ? 'bg-gradient-to-r from-[#b4654d] via-[#e8c97a] to-[#b4654d] text-[#041321] border border-[#f6eddf] shadow-[0_0_24px_rgba(232,201,122,0.85)] animate-pulse'
-              : normalized === 'athena'
-              ? 'bg-[#041321]/95 text-[#e8c97a] border border-[#e8c97a] shadow-[0_0_20px_rgba(232,201,122,0.6)]'
-              : normalized === 'poseidon'
-              ? 'bg-[#041321]/95 text-[#8ca1aa] border border-[#4a90bc] shadow-[0_0_20px_rgba(74,144,188,0.7)]'
-              : 'bg-[#041321]/95 text-[#f6eddf] border border-[#b4654d] shadow-[0_0_20px_rgba(212,114,87,0.7)]'
           }`}
-        >
-          <span
-            className={`w-2 h-2 rounded-full ${
-              isInterruption ? 'bg-[#041321] animate-ping' : 'bg-[#e8c97a] animate-pulse'
-            }`}
-          />
-          <span>
-            {isInterruption
-              ? '⚡ INTERRUPTION • THE FLOOR SEIZED'
-              : `ORATOR AT APEX • ${info.name}`}
-          </span>
-        </div>
-      ) : (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full text-[9px] font-mono tracking-widest uppercase text-[#ded0bc]/70 bg-[#041321]/90 border border-[#ded0bc]/25 shadow-md whitespace-nowrap">
-          {orbitSlot === 'BOTTOM_RIGHT' ? 'On Deck in Orbit' : 'Listening in Orbit'}
-        </div>
+        />
       )}
 
       {/* Top Status & Stance */}
@@ -132,11 +95,11 @@ export default function GodPodium({
           <div className="flex items-center gap-1.5">
             <span
               className={`w-2 h-2 rounded-full ${
-                isActive ? 'bg-[#e8c97a] animate-pulse shadow-[0_0_8px_#e8c97a]' : 'bg-[#8ca1aa]/50'
+                isActive ? 'bg-[#e8c97a] animate-pulse' : 'bg-[#8ca1aa]/50'
               }`}
             />
-            <span className="text-[10px] font-mono tracking-widest uppercase text-[#ded0bc]/90 font-bold">
-              {isActive ? 'Council Floor Active' : 'Stationed in Ring'}
+            <span className="text-[10px] font-mono tracking-widest uppercase text-[#ded0bc]/90 font-semibold">
+              {isActive ? 'Floor Active' : 'Listening'}
             </span>
           </div>
 
@@ -159,12 +122,6 @@ export default function GodPodium({
               size={64}
               isActive={isActive}
             />
-            {isActive && (
-              <span className="absolute -bottom-1 -right-1 flex h-3.5 w-3.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#e8c97a] opacity-75" />
-                <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-[#e8c97a]" />
-              </span>
-            )}
           </div>
 
           <div>
@@ -184,7 +141,7 @@ export default function GodPodium({
 
         {/* Latest Argument Excerpt in Literary Serif */}
         {latestTurnText && (
-          <div className="p-3.5 rounded-2xl bg-[#041321]/70 border border-[#ded0bc]/20 text-xs font-serif text-[#f6eddf] italic leading-relaxed line-clamp-3 shadow-inner">
+          <div className="p-3.5 rounded-2xl bg-[#041321]/70 border border-[#ded0bc]/20 text-xs font-serif text-[#f6eddf] italic leading-relaxed line-clamp-3">
             "{latestTurnText}"
           </div>
         )}
@@ -211,36 +168,20 @@ export default function GodPodium({
           )}
         </div>
 
-        {/* Actions: Interrupt or Challenge Button */}
-        <div className="flex items-center gap-1.5">
-          {!isActive && onInterrupt && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onInterrupt(speaker);
-              }}
-              title={`Trigger ${info.name} to interrupt immediately straight up`}
-              className="text-[10px] font-mono tracking-wider uppercase text-[#e8c97a] hover:text-[#f6eddf] transition flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#e8c97a]/15 border border-[#e8c97a]/40 hover:bg-[#e8c97a]/30"
-            >
-              <Zap size={11} className="text-[#e8c97a]" />
-              <span>Interrupt</span>
-            </button>
-          )}
-
-          {onChallenge && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onChallenge(speaker);
-              }}
-              disabled={isChallenging}
-              className="text-[10px] font-mono tracking-wider uppercase text-[#f6eddf] hover:text-[#e8c97a] transition flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#f6eddf]/10 border border-[#ded0bc]/25 hover:bg-[#f6eddf]/20 disabled:opacity-40"
-            >
-              <Swords size={11} />
-              <span>Challenge</span>
-            </button>
-          )}
-        </div>
+        {/* Clean Challenge Button */}
+        {onChallenge && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onChallenge(speaker);
+            }}
+            disabled={isChallenging}
+            className="text-[10px] font-mono tracking-wider uppercase text-[#f6eddf] hover:text-[#e8c97a] transition flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#f6eddf]/10 border border-[#ded0bc]/25 hover:bg-[#f6eddf]/20 disabled:opacity-40"
+          >
+            <Swords size={11} />
+            <span>Challenge</span>
+          </button>
+        )}
       </div>
     </div>
   );
