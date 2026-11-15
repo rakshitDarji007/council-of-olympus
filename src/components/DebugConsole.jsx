@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Terminal, X, RefreshCw, ChevronDown, ChevronRight, CheckCircle, AlertTriangle, AlertCircle, Info } from 'lucide-react';
+import { Terminal, X, RefreshCw, CheckCircle, AlertTriangle, AlertCircle, Info } from 'lucide-react';
 import { getLogs } from '../services/api.js';
 
 export default function DebugConsole({ isOpen = false, onClose }) {
@@ -33,18 +33,18 @@ export default function DebugConsole({ isOpen = false, onClose }) {
 
   const levelBadges = {
     SUCCESS: { text: 'text-emerald-400', icon: CheckCircle },
-    INFO: { text: 'text-zinc-400', icon: Info },
+    INFO: { text: 'text-[#ded0bc]', icon: Info },
     WARN: { text: 'text-amber-400', icon: AlertTriangle },
     ERROR: { text: 'text-rose-400', icon: AlertCircle },
   };
 
   return (
-    <div className="fixed inset-y-0 right-0 z-50 w-full sm:w-[480px] bg-[#0B0C0E]/95 backdrop-blur-xl border-l border-white/[0.08] shadow-2xl flex flex-col select-none animate-slide-up">
+    <div className="fixed inset-y-0 right-0 z-50 w-full sm:w-[480px] bg-[#102f46]/95 backdrop-blur-xl border-l border-[#ded0bc]/20 shadow-2xl flex flex-col select-none animate-slide-up text-[#f6eddf]">
       {/* Header */}
-      <div className="p-4 bg-zinc-950/80 border-b border-white/[0.06] flex items-center justify-between">
-        <div className="flex items-center gap-2 text-zinc-100">
-          <Terminal size={15} className="text-[#D4A373]" />
-          <h3 className="font-mono text-xs font-semibold tracking-wider uppercase">
+      <div className="p-4 bg-[#041321]/60 border-b border-[#ded0bc]/15 flex items-center justify-between">
+        <div className="flex items-center gap-2 text-[#f6eddf]">
+          <Terminal size={15} className="text-[#e8c97a]" />
+          <h3 className="font-mono text-xs font-bold tracking-wider uppercase">
             Telemetry & Event Stream
           </h3>
         </div>
@@ -53,13 +53,13 @@ export default function DebugConsole({ isOpen = false, onClose }) {
           <button
             onClick={fetchLogs}
             title="Refresh logs"
-            className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition"
+            className="p-1.5 rounded-full text-[#ded0bc] hover:text-[#f6eddf] hover:bg-[#ded0bc]/15 transition"
           >
             <RefreshCw size={13} />
           </button>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition"
+            className="p-1.5 rounded-full text-[#ded0bc] hover:text-[#f6eddf] hover:bg-[#ded0bc]/15 transition"
           >
             <X size={15} />
           </button>
@@ -67,15 +67,15 @@ export default function DebugConsole({ isOpen = false, onClose }) {
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex items-center gap-1.5 p-2 bg-[#0E0F13] border-b border-white/[0.05] overflow-x-auto text-[11px] font-mono">
+      <div className="flex items-center gap-1.5 p-2 bg-[#0d283e] border-b border-[#ded0bc]/15 overflow-x-auto text-[11px] font-mono">
         {['ALL', 'INFO', 'SUCCESS', 'WARN', 'ERROR'].map((lvl) => (
           <button
             key={lvl}
             onClick={() => setFilter(lvl)}
-            className={`px-2.5 py-1 rounded-md transition ${
+            className={`px-3 py-1 rounded-full transition font-semibold ${
               filter === lvl
-                ? 'bg-[#D4A373] text-zinc-950 font-bold'
-                : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
+                ? 'bg-[#b4654d] text-[#f6eddf]'
+                : 'text-[#ded0bc]/70 hover:text-[#f6eddf] hover:bg-[#ded0bc]/10'
             }`}
           >
             {lvl}
@@ -86,7 +86,7 @@ export default function DebugConsole({ isOpen = false, onClose }) {
       {/* Log Feed */}
       <div className="flex-1 overflow-y-auto p-3 flex flex-col gap-2 font-mono text-xs">
         {filteredLogs.length === 0 ? (
-          <div className="p-6 text-center text-zinc-600">
+          <div className="p-6 text-center text-[#ded0bc]/60">
             No telemetry events recorded yet.
           </div>
         ) : (
@@ -98,34 +98,34 @@ export default function DebugConsole({ isOpen = false, onClose }) {
             return (
               <div
                 key={idx}
-                className="p-2.5 rounded-lg bg-zinc-900/60 border border-white/[0.04] hover:border-white/[0.1] transition flex flex-col gap-1 cursor-pointer"
+                className="p-3 rounded-xl bg-[#041321]/50 border border-[#ded0bc]/15 hover:border-[#ded0bc]/35 transition flex flex-col gap-1 cursor-pointer"
                 onClick={() => setExpandedIdx(isExpanded ? null : idx)}
               >
                 <div className="flex items-center justify-between text-[11px]">
                   <div className="flex items-center gap-1.5">
                     <Icon size={12} className={badge.text} />
-                    <span className="font-bold text-zinc-300">
+                    <span className="font-bold text-[#e8c97a]">
                       [{log.category}]
                     </span>
                     <span className={badge.text}>{log.level}</span>
                   </div>
-                  <span className="text-zinc-600">
+                  <span className="text-[#ded0bc]/50 text-[10px]">
                     {new Date(log.timestamp).toLocaleTimeString()}
                   </span>
                 </div>
 
-                <p className="text-zinc-200 text-xs break-words">
+                <p className="text-[#f6eddf] text-xs break-words">
                   {log.message}
                 </p>
 
                 {log.details && (
-                  <div className="mt-1 pt-1 border-t border-white/[0.04] text-[11px] text-zinc-400">
+                  <div className="mt-1 pt-1 border-t border-[#ded0bc]/15 text-[11px] text-[#ded0bc]/70">
                     {isExpanded ? (
-                      <pre className="whitespace-pre-wrap overflow-x-auto bg-black/40 p-2 rounded">
+                      <pre className="whitespace-pre-wrap overflow-x-auto bg-[#041321] p-2 rounded text-[#ded0bc]">
                         {log.details}
                       </pre>
                     ) : (
-                      <span className="text-zinc-600 truncate block">
+                      <span className="text-[#ded0bc]/60 truncate block">
                         Details: {log.details.slice(0, 70)}...
                       </span>
                     )}

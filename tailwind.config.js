@@ -7,6 +7,19 @@ export default {
   theme: {
     extend: {
       colors: {
+        hackuta: {
+          clay: "#eee3d2",
+          light: "#f6eddf",
+          sand: "#ded0bc",
+          ink: "#1a3a52",
+          night: "#102f46",
+          abyss: "#041321",
+          ocean: "#305873",
+          mist: "#8ca1aa",
+          terracotta: "#b4654d",
+          gold: "#e8c97a",
+          "gold-dark": "#cda53c",
+        },
         olympus: {
           bg: "#0A0F1D",
           surface: "#111A2E",

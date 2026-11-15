@@ -1,36 +1,45 @@
 import React from 'react';
 
 /**
- * Atmospheric Dawn-over-the-Aegean lighting (Inspired by Image 1 & Homer's Rosy-Fingered Dawn):
- * Soft terracotta-rose, dusty mauve, and champagne horizon illumination.
+ * Atmospheric Aegean & Homeric Odyssey backdrop:
+ * Delicate sea mist, terracotta dawn reflection, and coastal clay warmth.
  */
 export default function StarBackground() {
   return (
     <div className="fixed inset-0 pointer-events-none select-none z-0 overflow-hidden">
-      {/* Primary Rose-Apricot Dawn Haze (Top Horizon) */}
+      {/* Top Left: Gentle Terracotta Sunrise Mist */}
       <div 
-        className="absolute -top-40 left-1/2 -translate-x-1/2 w-[1100px] h-[550px] pointer-events-none opacity-60"
+        className="absolute -top-32 -left-32 w-[600px] h-[500px] pointer-events-none opacity-40"
         style={{
-          background: 'radial-gradient(ellipse at center, rgba(228, 164, 149, 0.28) 0%, rgba(206, 132, 145, 0.16) 40%, rgba(25, 28, 48, 0.05) 75%, transparent 100%)',
+          background: 'radial-gradient(circle at center, rgba(180, 101, 77, 0.15) 0%, rgba(238, 227, 210, 0) 70%)',
+          filter: 'blur(60px)',
+        }}
+      />
+
+      {/* Top Right: Deep Aegean Ocean Haze */}
+      <div 
+        className="absolute -top-40 right-[-10%] w-[700px] h-[600px] pointer-events-none opacity-30"
+        style={{
+          background: 'radial-gradient(ellipse at center, rgba(48, 88, 115, 0.18) 0%, rgba(26, 58, 82, 0.08) 45%, transparent 75%)',
           filter: 'blur(70px)',
         }}
       />
 
-      {/* Secondary Soft Mauve Horizon Drift */}
+      {/* Center Subtle Homeric Gold Drift */}
       <div 
-        className="absolute top-20 left-1/4 w-[600px] h-[400px] pointer-events-none opacity-30"
+        className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[800px] h-[400px] pointer-events-none opacity-20"
         style={{
-          background: 'radial-gradient(circle at center, rgba(216, 154, 175, 0.18) 0%, transparent 70%)',
+          background: 'radial-gradient(ellipse at center, rgba(232, 201, 122, 0.18) 0%, transparent 65%)',
           filter: 'blur(80px)',
         }}
       />
 
-      {/* Deep Aegean Indigo Depth (Bottom) */}
+      {/* Bottom Coastal Sand Warmth */}
       <div 
-        className="absolute -bottom-32 right-1/4 w-[700px] h-[400px] pointer-events-none opacity-35"
+        className="absolute -bottom-40 left-1/3 w-[900px] h-[500px] pointer-events-none opacity-35"
         style={{
-          background: 'radial-gradient(circle at center, rgba(30, 91, 106, 0.18) 0%, transparent 70%)',
-          filter: 'blur(90px)',
+          background: 'radial-gradient(circle at center, rgba(222, 208, 188, 0.4) 0%, transparent 70%)',
+          filter: 'blur(80px)',
         }}
       />
     </div>

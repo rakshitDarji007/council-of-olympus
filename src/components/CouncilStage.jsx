@@ -34,14 +34,14 @@ export default function CouncilStage({
   return (
     <div className="w-full max-w-5xl mx-auto flex flex-col items-center select-none px-4">
       {/* Editorial Tension Header */}
-      <div className="w-full max-w-xl text-center mb-8">
-        <GreekMeander opacity={0.25} className="mb-3" />
+      <div className="w-full max-w-xl text-center mb-6">
+        <GreekMeander opacity={0.5} className="mb-3" />
         {debateDynamic ? (
-          <p className="text-xs font-mono tracking-widest text-[#D4A373] uppercase font-medium">
+          <p className="text-xs font-mono tracking-widest text-[#b4654d] uppercase font-bold">
             {debateDynamic}
           </p>
         ) : (
-          <p className="text-xs font-mono tracking-widest text-zinc-500 uppercase">
+          <p className="text-xs font-mono tracking-widest text-[#506575] uppercase font-bold">
             Tripartite Adversarial Deliberation
           </p>
         )}

@@ -17,11 +17,11 @@ export default function SubtitleBar({
   const [displayedText, setDisplayedText] = useState('');
 
   const speakerMeta = {
-    athena: { name: 'ATHENA', color: '#94B49F', title: 'Strategic Mastery' },
-    poseidon: { name: 'POSEIDON', color: '#2A7385', title: 'Downside Exposure' },
-    hermes: { name: 'HERMES', color: '#E8A28E', title: 'Agile Optionality' },
-    oracle: { name: 'FACILITATOR', color: '#E8A28E', title: 'Context Discovery' },
-    odysseus: { name: 'ODYSSEUS', color: '#F8F6F0', title: 'The Ruling' },
+    athena: { name: 'ATHENA', color: '#2b533e', title: 'Strategic Mastery' },
+    poseidon: { name: 'POSEIDON', color: '#1a3a52', title: 'Downside Exposure' },
+    hermes: { name: 'HERMES', color: '#b4654d', title: 'Agile Optionality' },
+    oracle: { name: 'FACILITATOR', color: '#b4654d', title: 'Context Discovery' },
+    odysseus: { name: 'ODYSSEUS', color: '#102f46', title: 'The Ruling' },
   };
 
   const currentSpeaker = currentTurn?.speaker?.toLowerCase() || 'athena';
@@ -48,9 +48,9 @@ export default function SubtitleBar({
 
   return (
     <div className="w-full max-w-4xl mx-auto px-4 select-none">
-      <div className="editorial-card rounded-[28px] p-6 sm:p-7 relative overflow-hidden">
+      <div className="odyssey-card p-6 sm:p-7 relative overflow-hidden">
         {/* Top Metadata Row */}
-        <div className="flex items-center justify-between border-b border-white/[0.08] pb-3 mb-4">
+        <div className="flex items-center justify-between border-b border-[#ded0bc] pb-3 mb-4">
           <div className="flex items-center gap-2.5">
             <span
               className="font-mono text-xs font-bold tracking-widest uppercase"
@@ -58,18 +58,18 @@ export default function SubtitleBar({
             >
               {meta.name}
             </span>
-            <span className="text-zinc-400 text-xs font-sans">
+            <span className="text-[#506575] text-xs font-sans">
               • {meta.title}
             </span>
             {currentTurn?.addressed_to && (
-              <span className="text-[10px] font-mono text-[#E8A28E] bg-[#E8A28E]/10 px-2 py-0.5 rounded-full border border-[#E8A28E]/25">
-                To: {currentTurn.addressed_to.toUpperCase()}
+              <span className="text-[10px] font-mono text-[#b4654d] bg-[#b4654d]/10 px-2.5 py-0.5 rounded-full border border-[#b4654d]/30 font-bold uppercase">
+                To: {currentTurn.addressed_to}
               </span>
             )}
           </div>
 
           {/* Turn Progress Indicator */}
-          <div className="flex items-center gap-2 text-xs font-mono text-zinc-400">
+          <div className="flex items-center gap-2 text-xs font-mono text-[#506575]">
             <span>Turn {turnIndex + 1} of {totalTurns}</span>
             <div className="flex gap-1.5 ml-1.5">
               {Array.from({ length: totalTurns }).map((_, i) => (
@@ -77,10 +77,10 @@ export default function SubtitleBar({
                   key={i}
                   className={`w-1.5 h-1.5 rounded-full transition-all ${
                     i === turnIndex
-                      ? 'bg-[#E8A28E] scale-125'
+                      ? 'bg-[#b4654d] scale-125'
                       : i < turnIndex
-                      ? 'bg-zinc-400'
-                      : 'bg-zinc-700'
+                      ? 'bg-[#1a3a52]'
+                      : 'bg-[#ded0bc]'
                   }`}
                 />
               ))}
@@ -90,22 +90,22 @@ export default function SubtitleBar({
 
         {/* Dynamic Spoken Dialogue in Literary Serif */}
         <div className="min-h-[70px] flex items-center mb-5">
-          <p className="text-lg sm:text-2xl text-white font-serif leading-relaxed font-normal">
+          <p className="text-xl sm:text-2xl text-[#1a3a52] font-serif leading-relaxed font-normal">
             "{displayedText}"
             {displayedText.length < fullText.length && (
-              <span className="inline-block w-1.5 h-4 ml-1 bg-[#E8A28E] animate-pulse" />
+              <span className="inline-block w-1.5 h-4 ml-1 bg-[#b4654d] animate-pulse" />
             )}
           </p>
         </div>
 
         {/* Player Controls Bar */}
-        <div className="flex items-center justify-between pt-3 border-t border-white/[0.08] flex-wrap gap-3">
+        <div className="flex items-center justify-between pt-3 border-t border-[#ded0bc] flex-wrap gap-3">
           <div className="flex items-center gap-2">
             {/* Play/Pause */}
             <button
               onClick={onTogglePlayPause}
               title={isPlaying ? 'Pause' : 'Play'}
-              className="p-2.5 rounded-full frosted-capsule text-zinc-300 hover:text-white transition"
+              className="p-2.5 rounded-full header-pill-nav text-[#1a3a52] hover:bg-[#eee3d2] transition"
             >
               {isPlaying ? <Pause size={15} /> : <Play size={15} />}
             </button>
@@ -114,7 +114,7 @@ export default function SubtitleBar({
             <button
               onClick={onNextTurn}
               title="Next Turn"
-              className="p-2.5 rounded-full frosted-capsule text-zinc-300 hover:text-white transition"
+              className="p-2.5 rounded-full header-pill-nav text-[#1a3a52] hover:bg-[#eee3d2] transition"
             >
               <SkipForward size={15} />
             </button>
@@ -125,30 +125,30 @@ export default function SubtitleBar({
               title={isMuted ? 'Unmute' : 'Mute'}
               className={`p-2.5 rounded-full border transition ${
                 isMuted
-                  ? 'bg-rose-950/50 text-rose-300 border-rose-500/40'
-                  : 'frosted-capsule text-zinc-400 hover:text-white'
+                  ? 'bg-[#fff0ed] text-[#b4654d] border-[#b4654d]'
+                  : 'header-pill-nav text-[#506575] hover:text-[#1a3a52]'
               }`}
             >
               {isMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
             </button>
           </div>
 
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-3">
             {/* Interject */}
             <button
               onClick={onOpenInterject}
-              className="px-4 py-2 rounded-full frosted-capsule text-zinc-200 hover:text-white text-xs font-sans font-medium transition flex items-center gap-1.5"
+              className="header-pill-nav px-4 py-2 text-xs font-semibold text-[#1a3a52] hover:bg-[#eee3d2] transition flex items-center gap-1.5"
             >
-              <MessageSquare size={13} className="text-[#E8A28E]" />
+              <MessageSquare size={13} className="text-[#b4654d]" />
               <span>Interject Objection</span>
             </button>
 
             {/* Skip to Verdict Pill */}
             <button
               onClick={onSkipToVerdict}
-              className="px-5 py-2 rounded-full bg-[#F8F6F0] hover:bg-white text-[#0A0C16] text-xs font-sans font-bold tracking-wider uppercase transition-all shadow hover:scale-[1.02] active:scale-[0.98] flex items-center gap-1.5"
+              className="odyssey-btn flex items-center gap-1.5"
             >
-              <FastForward size={13} />
+              <FastForward size={13} className="text-[#b4654d]" />
               <span>Proceed to Ruling</span>
             </button>
           </div>
