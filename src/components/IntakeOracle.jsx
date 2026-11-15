@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import GreekMeander from './GreekMeander.jsx';
 import { Mic, MicOff, AlertTriangle, Compass, Send, Sparkles } from 'lucide-react';
 import { useSpeechRecognition } from '../hooks/useSpeechRecognition.js';
@@ -15,7 +15,54 @@ export default function IntakeOracle({
   onSelectSampleDilemma,
 }) {
   const [inputText, setInputText] = useState('');
+  const [silencePending, setSilencePending] = useState(false);
   const baseTextRef = useRef('');
+  const autoSubmitTimerRef = useRef(null);
+  const latestTextRef = useRef('');
+
+  latestTextRef.current = inputText;
+
+  const clearAutoSubmitTimer = () => {
+    if (autoSubmitTimerRef.current) {
+      clearTimeout(autoSubmitTimerRef.current);
+      autoSubmitTimerRef.current = null;
+    }
+    setSilencePending(false);
+  };
+
+  const handleDirectSubmit = (rawText) => {
+    const textToSubmit = (rawText !== undefined ? rawText : latestTextRef.current || inputText || '').trim();
+    if (!textToSubmit || isWaiting) return;
+    clearAutoSubmitTimer();
+    if (isRecording) {
+      stopRecording();
+    }
+    if (!dilemma) {
+      onSubmitDilemma(textToSubmit);
+      setInputText('');
+      latestTextRef.current = '';
+    } else {
+      onSubmitAnswer(textToSubmit);
+      setInputText('');
+      latestTextRef.current = '';
+    }
+  };
+
+  const scheduleAutoSubmit = (text) => {
+    clearAutoSubmitTimer();
+    const clean = (text || '').trim();
+    if (clean.length < 6 || isWaiting) return;
+
+    setSilencePending(true);
+    autoSubmitTimerRef.current = setTimeout(() => {
+      const current = (latestTextRef.current || '').trim();
+      if (current.length >= 6 && !isWaiting) {
+        handleDirectSubmit(current);
+      } else {
+        setSilencePending(false);
+      }
+    }, 2200);
+  };
 
   const {
     isRecording,
@@ -24,13 +71,35 @@ export default function IntakeOracle({
     stopRecording,
   } = useSpeechRecognition({
     onTranscript: (transcript) => {
-      setInputText(baseTextRef.current ? `${baseTextRef.current} ${transcript}` : transcript);
+      const fullText = baseTextRef.current ? `${baseTextRef.current} ${transcript}` : transcript;
+      setInputText(fullText);
+      latestTextRef.current = fullText;
+      scheduleAutoSubmit(fullText);
+    },
+    onSpeechEnd: () => {
+      const current = (latestTextRef.current || '').trim();
+      if (current.length >= 6 && !isWaiting) {
+        handleDirectSubmit(current);
+      }
     },
   });
+
+  useEffect(() => {
+    return () => {
+      if (autoSubmitTimerRef.current) {
+        clearTimeout(autoSubmitTimerRef.current);
+      }
+    };
+  }, []);
 
   const handleToggleVoice = () => {
     if (isRecording) {
       stopRecording();
+      clearAutoSubmitTimer();
+      const current = (latestTextRef.current || inputText || '').trim();
+      if (current.length >= 6 && !isWaiting) {
+        handleDirectSubmit(current);
+      }
     } else {
       baseTextRef.current = inputText ? inputText.trim() : '';
       startRecording();
@@ -61,23 +130,19 @@ export default function IntakeOracle({
   ];
 
   const handleInitialSubmit = (e) => {
-    e.preventDefault();
-    if (!inputText.trim()) return;
-    onSubmitDilemma(inputText.trim());
-    setInputText('');
+    if (e) e.preventDefault();
+    handleDirectSubmit();
   };
 
   const handleAnswerSubmit = (e) => {
-    e.preventDefault();
-    if (!inputText.trim()) return;
-    onSubmitAnswer(inputText.trim());
-    setInputText('');
+    if (e) e.preventDefault();
+    handleDirectSubmit();
   };
 
   const handleKeyDown = (e) => {
-    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
-      if (!dilemma) handleInitialSubmit(e);
-      else handleAnswerSubmit(e);
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleDirectSubmit();
     }
   };
 
@@ -138,26 +203,32 @@ export default function IntakeOracle({
               <textarea
                 rows={4}
                 value={inputText}
-                onChange={(e) => setInputText(e.target.value)}
+                onChange={(e) => {
+                  setInputText(e.target.value);
+                  latestTextRef.current = e.target.value;
+                  if (autoSubmitTimerRef.current) {
+                    clearAutoSubmitTimer();
+                  }
+                }}
                 onKeyDown={handleKeyDown}
                 placeholder="Describe the decision you are wrestling with... What are the competing paths, real constraints, and what are you most worried about losing?"
                 className="w-full bg-transparent border-none focus:outline-none text-[#1a3a52] placeholder-[#8ca1aa] text-base sm:text-lg font-sans leading-relaxed resize-none p-1"
               />
 
               {/* Bottom Action Bar */}
-              <div className="flex items-center justify-between pt-4 mt-2 border-t border-[#ded0bc]">
-                <div className="flex items-center gap-2.5">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between pt-4 mt-2 border-t border-[#ded0bc] gap-3">
+                <div className="flex items-center gap-2.5 flex-wrap">
                   <button
                     type="button"
                     onClick={handleToggleVoice}
-                    title={isRecording ? 'Stop Recording' : 'Dictate with microphone'}
+                    title={isRecording ? 'Stop Recording and Convene' : 'Dictate with microphone'}
                     className={`px-3.5 py-1.5 rounded-full border text-xs transition flex items-center gap-2 ${
                       isRecording
-                        ? 'bg-[#b4654d] text-[#f6eddf] border-[#b4654d] animate-pulse'
+                        ? 'bg-[#b4654d] text-[#f6eddf] border-[#b4654d] shadow-sm'
                         : 'header-pill-nav text-[#1a3a52] hover:bg-[#fffbf5]'
                     }`}
                   >
-                    {isRecording ? <MicOff size={13} /> : <Mic size={13} />}
+                    {isRecording ? <MicOff size={13} className="animate-pulse" /> : <Mic size={13} />}
                     <span className="text-[11px] font-semibold">
                       {isRecording ? 'Listening...' : 'Voice Dictation'}
                     </span>
@@ -168,6 +239,7 @@ export default function IntakeOracle({
                     onClick={() => {
                       const randomSample = sampleDilemmas[Math.floor(Math.random() * sampleDilemmas.length)];
                       setInputText(randomSample.text);
+                      latestTextRef.current = randomSample.text;
                     }}
                     title="Insert a sample dilemma into the drafting box"
                     className="px-3 py-1.5 rounded-full header-pill-nav text-[#506575] hover:text-[#b4654d] hover:bg-[#fffbf5] text-xs transition flex items-center gap-1.5"
@@ -176,16 +248,30 @@ export default function IntakeOracle({
                     <span className="text-[11px] font-semibold">Try Example</span>
                   </button>
 
-                  <span className="text-[11px] text-[#8ca1aa] hidden md:inline font-mono">
-                    ⌘ + Enter
-                  </span>
+                  {/* Dynamic Voice Status / Auto-Submit Cue */}
+                  {isRecording && (
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#f6eddf] border border-[#ded0bc] text-[11px] font-sans text-[#b4654d]">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#b4654d] animate-ping" />
+                      <span className="font-semibold">
+                        {silencePending
+                          ? 'Silence detected • Convening Council...'
+                          : 'Auto-submits when done speaking'}
+                      </span>
+                    </div>
+                  )}
+
+                  {!isRecording && (
+                    <span className="text-[11px] text-[#8ca1aa] hidden md:inline font-mono">
+                      ↵ Enter to convene • Shift+Enter for new line
+                    </span>
+                  )}
                 </div>
 
                 {/* HackUTA Signature Odyssey Button */}
                 <button
                   type="submit"
                   disabled={!inputText.trim() || isWaiting}
-                  className="odyssey-btn flex items-center gap-2"
+                  className="odyssey-btn flex items-center gap-2 shrink-0 self-end sm:self-auto"
                 >
                   <Compass size={14} className="text-[#b4654d]" />
                   <span>{isWaiting ? 'Consulting the Gods...' : 'Convene the Council'}</span>
@@ -252,23 +338,36 @@ export default function IntakeOracle({
                   <input
                     type="text"
                     value={inputText}
-                    onChange={(e) => setInputText(e.target.value)}
+                    onChange={(e) => {
+                      setInputText(e.target.value);
+                      latestTextRef.current = e.target.value;
+                      if (autoSubmitTimerRef.current) {
+                        clearAutoSubmitTimer();
+                      }
+                    }}
                     onKeyDown={handleKeyDown}
-                    placeholder="Provide specific numbers, timeline, or non-negotiables..."
-                    className="w-full bg-[#eee3d2]/60 border border-[#ded0bc] rounded-full px-5 py-3.5 text-[#1a3a52] placeholder-[#8ca1aa] text-sm font-sans focus:outline-none focus:border-[#305873]"
+                    placeholder="Provide specific numbers, timeline, or non-negotiables... (Press Enter to submit)"
+                    className="w-full bg-[#eee3d2]/60 border border-[#ded0bc] rounded-full px-5 py-3.5 pr-28 text-[#1a3a52] placeholder-[#8ca1aa] text-sm font-sans focus:outline-none focus:border-[#305873]"
                   />
-                  <button
-                    type="button"
-                    onClick={handleToggleVoice}
-                    title={isRecording ? 'Stop Recording' : 'Voice Dictate'}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#506575] hover:text-[#1a3a52]"
-                  >
-                    {isRecording ? (
-                      <MicOff size={16} className="text-[#b4654d] animate-pulse" />
-                    ) : (
-                      <Mic size={16} />
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                    {isRecording && (
+                      <span className="text-[10px] font-mono text-[#b4654d] bg-[#f6eddf] px-2 py-0.5 rounded-full border border-[#ded0bc] animate-pulse">
+                        {silencePending ? 'Submitting...' : 'Listening'}
+                      </span>
                     )}
-                  </button>
+                    <button
+                      type="button"
+                      onClick={handleToggleVoice}
+                      title={isRecording ? 'Stop and Submit' : 'Voice Dictate'}
+                      className="p-1 text-[#506575] hover:text-[#1a3a52]"
+                    >
+                      {isRecording ? (
+                        <MicOff size={16} className="text-[#b4654d] animate-pulse" />
+                      ) : (
+                        <Mic size={16} />
+                      )}
+                    </button>
+                  </div>
                 </div>
 
                 <div className="flex items-center justify-between pt-2">

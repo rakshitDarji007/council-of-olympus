@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import GreekMeander from './GreekMeander.jsx';
 import { MessageSquare, Mic, MicOff, X, Send } from 'lucide-react';
 import { useSpeechRecognition } from '../hooks/useSpeechRecognition.js';
@@ -11,7 +11,48 @@ export default function InterjectionModal({
 }) {
   const [interjectionText, setInterjectionText] = useState('');
   const [targetGod, setTargetGod] = useState('all');
+  const [silencePending, setSilencePending] = useState(false);
   const baseTextRef = useRef('');
+  const autoSubmitTimerRef = useRef(null);
+  const latestTextRef = useRef('');
+
+  latestTextRef.current = interjectionText;
+
+  const clearAutoSubmitTimer = () => {
+    if (autoSubmitTimerRef.current) {
+      clearTimeout(autoSubmitTimerRef.current);
+      autoSubmitTimerRef.current = null;
+    }
+    setSilencePending(false);
+  };
+
+  const handleDirectSubmit = (rawText) => {
+    const textToSubmit = (rawText !== undefined ? rawText : latestTextRef.current || interjectionText || '').trim();
+    if (!textToSubmit || isSubmitting) return;
+    clearAutoSubmitTimer();
+    if (isRecording) stopRecording();
+    const prefix = targetGod !== 'all' ? `[To ${targetGod.toUpperCase()}]: ` : '';
+    onSubmitInterjection(`${prefix}${textToSubmit}`);
+    setInterjectionText('');
+    latestTextRef.current = '';
+    onClose();
+  };
+
+  const scheduleAutoSubmit = (text) => {
+    clearAutoSubmitTimer();
+    const clean = (text || '').trim();
+    if (clean.length < 5 || isSubmitting) return;
+
+    setSilencePending(true);
+    autoSubmitTimerRef.current = setTimeout(() => {
+      const current = (latestTextRef.current || '').trim();
+      if (current.length >= 5 && !isSubmitting) {
+        handleDirectSubmit(current);
+      } else {
+        setSilencePending(false);
+      }
+    }, 2200);
+  };
 
   const {
     isRecording,
@@ -19,13 +60,35 @@ export default function InterjectionModal({
     stopRecording,
   } = useSpeechRecognition({
     onTranscript: (transcript) => {
-      setInterjectionText(baseTextRef.current ? `${baseTextRef.current} ${transcript}` : transcript);
+      const fullText = baseTextRef.current ? `${baseTextRef.current} ${transcript}` : transcript;
+      setInterjectionText(fullText);
+      latestTextRef.current = fullText;
+      scheduleAutoSubmit(fullText);
+    },
+    onSpeechEnd: () => {
+      const current = (latestTextRef.current || '').trim();
+      if (current.length >= 5 && !isSubmitting) {
+        handleDirectSubmit(current);
+      }
     },
   });
+
+  useEffect(() => {
+    return () => {
+      if (autoSubmitTimerRef.current) {
+        clearTimeout(autoSubmitTimerRef.current);
+      }
+    };
+  }, []);
 
   const handleToggleVoice = () => {
     if (isRecording) {
       stopRecording();
+      clearAutoSubmitTimer();
+      const current = (latestTextRef.current || interjectionText || '').trim();
+      if (current.length >= 5 && !isSubmitting) {
+        handleDirectSubmit(current);
+      }
     } else {
       baseTextRef.current = interjectionText ? interjectionText.trim() : '';
       startRecording();
@@ -33,6 +96,7 @@ export default function InterjectionModal({
   };
 
   const handleModalClose = () => {
+    clearAutoSubmitTimer();
     if (isRecording) stopRecording();
     onClose();
   };
@@ -47,12 +111,15 @@ export default function InterjectionModal({
   ];
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!interjectionText.trim()) return;
-    const prefix = targetGod !== 'all' ? `[To ${targetGod.toUpperCase()}]: ` : '';
-    onSubmitInterjection(`${prefix}${interjectionText.trim()}`);
-    setInterjectionText('');
-    onClose();
+    if (e) e.preventDefault();
+    handleDirectSubmit();
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleDirectSubmit();
+    }
   };
 
   return (
@@ -134,41 +201,59 @@ export default function InterjectionModal({
             <textarea
               rows={3}
               value={interjectionText}
-              onChange={(e) => setInterjectionText(e.target.value)}
-              placeholder="State your clarification or challenge directly..."
-              className="w-full bg-[#eee3d2]/50 border border-[#ded0bc] rounded-2xl p-3.5 text-xs font-sans text-[#1a3a52] placeholder-[#8ca1aa] focus:outline-none focus:border-[#305873] resize-none"
+              onChange={(e) => {
+                setInterjectionText(e.target.value);
+                latestTextRef.current = e.target.value;
+                if (autoSubmitTimerRef.current) clearAutoSubmitTimer();
+              }}
+              onKeyDown={handleKeyDown}
+              placeholder="State your clarification or challenge directly... (Press Enter to send)"
+              className="w-full bg-[#eee3d2]/50 border border-[#ded0bc] rounded-2xl p-3.5 pr-12 text-xs font-sans text-[#1a3a52] placeholder-[#8ca1aa] focus:outline-none focus:border-[#305873] resize-none"
             />
-            <button
-              type="button"
-              onClick={handleToggleVoice}
-              title={isRecording ? 'Stop Recording' : 'Voice Dictate'}
-              className="absolute right-3 bottom-3 text-[#506575] hover:text-[#1a3a52]"
-            >
-              {isRecording ? (
-                <MicOff size={15} className="text-[#b4654d] animate-pulse" />
-              ) : (
-                <Mic size={15} />
+            <div className="absolute right-3 bottom-3 flex items-center gap-1.5">
+              {isRecording && (
+                <span className="text-[10px] font-mono text-[#b4654d] bg-[#f6eddf] px-1.5 py-0.5 rounded-md border border-[#ded0bc] animate-pulse">
+                  {silencePending ? 'Sending...' : 'Listening'}
+                </span>
               )}
-            </button>
+              <button
+                type="button"
+                onClick={handleToggleVoice}
+                title={isRecording ? 'Stop and Submit' : 'Voice Dictate'}
+                className="text-[#506575] hover:text-[#1a3a52] p-1"
+              >
+                {isRecording ? (
+                  <MicOff size={15} className="text-[#b4654d] animate-pulse" />
+                ) : (
+                  <Mic size={15} />
+                )}
+              </button>
+            </div>
           </div>
 
-          <div className="flex items-center justify-end gap-2 pt-2">
-            <button
-              type="button"
-              onClick={onClose}
-              disabled={isSubmitting}
-              className="header-pill-nav px-4 py-2 text-xs font-semibold text-[#506575]"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={!interjectionText.trim() || isSubmitting}
-              className="odyssey-btn flex items-center gap-1.5"
-            >
-              <Send size={13} className="text-[#b4654d]" />
-              <span>{isSubmitting ? 'Submitting...' : 'Interject'}</span>
-            </button>
+          <div className="flex items-center justify-between pt-2">
+            <span className="text-[10px] text-[#8ca1aa] font-mono">
+              ↵ Enter to send • Shift+Enter for new line
+            </span>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={handleModalClose}
+                disabled={isSubmitting}
+                className="header-pill-nav px-4 py-2 text-xs font-semibold text-[#506575]"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={!interjectionText.trim() || isSubmitting}
+                className="odyssey-btn flex items-center gap-1.5"
+              >
+                <Send size={13} className="text-[#b4654d]" />
+                <span>{isSubmitting ? 'Submitting...' : 'Interject'}</span>
+              </button>
+            </div>
           </div>
         </form>
       </div>

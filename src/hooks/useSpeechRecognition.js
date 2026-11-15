@@ -1,7 +1,10 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { uploadSpeechToText } from '../services/api.js';
 
-export function useSpeechRecognition({ onTranscript = null } = {}) {
+export function useSpeechRecognition({
+  onTranscript = null,
+  onSpeechEnd = null,
+} = {}) {
   const [isRecording, setIsRecording] = useState(false);
   const [error, setError] = useState(null);
 
@@ -9,10 +12,15 @@ export function useSpeechRecognition({ onTranscript = null } = {}) {
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const onTranscriptRef = useRef(onTranscript);
+  const onSpeechEndRef = useRef(onSpeechEnd);
 
   useEffect(() => {
     onTranscriptRef.current = onTranscript;
   }, [onTranscript]);
+
+  useEffect(() => {
+    onSpeechEndRef.current = onSpeechEnd;
+  }, [onSpeechEnd]);
 
   const startRecording = useCallback(() => {
     setError(null);
@@ -53,6 +61,9 @@ export function useSpeechRecognition({ onTranscript = null } = {}) {
 
         recognition.onend = () => {
           setIsRecording(false);
+          if (onSpeechEndRef.current) {
+            onSpeechEndRef.current();
+          }
         };
 
         recognitionRef.current = recognition;
@@ -86,6 +97,9 @@ export function useSpeechRecognition({ onTranscript = null } = {}) {
               const res = await uploadSpeechToText(audioBlob);
               if (res.text && onTranscriptRef.current) {
                 onTranscriptRef.current(res.text);
+              }
+              if (res.text && onSpeechEndRef.current) {
+                onSpeechEndRef.current(res.text);
               }
             } catch (err) {
               console.error('STT upload error', err);
