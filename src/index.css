@@ -14,8 +14,13 @@
   --terracotta: #b4654d;
   --gold: #e8c97a;
   --gold-dark: #cda53c;
+  --font-display: "Cinzel Decorative", "Cinzel", serif;
   --font-sans: "Barlow Semi Condensed", "Plus Jakarta Sans", sans-serif;
   --font-serif: "Newsreader", Georgia, serif;
+}
+
+.font-display {
+  font-family: var(--font-display);
 }
 
 body {

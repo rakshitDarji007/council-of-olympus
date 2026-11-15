@@ -40,9 +40,9 @@ export default {
         }
       },
       fontFamily: {
-        heading: ["'Newsreader'", "Georgia", "serif"],
-        display: ["'Cinzel'", "serif"],
-        sans: ["'Plus Jakarta Sans'", "system-ui", "sans-serif"],
+        heading: ["'Cinzel Decorative'", "'Cinzel'", "Georgia", "serif"],
+        display: ["'Cinzel Decorative'", "'Cinzel'", "serif"],
+        sans: ["'Barlow Semi Condensed'", "'Plus Jakarta Sans'", "system-ui", "sans-serif"],
         body: ["'Plus Jakarta Sans'", "system-ui", "sans-serif"],
         serif: ["'Newsreader'", "Georgia", "serif"],
       },
