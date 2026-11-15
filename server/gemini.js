@@ -329,7 +329,7 @@ The gods MUST directly acknowledge and react to this interjection in their upcom
     : ''
 }
 
-Generate only as many debate turns as needed (typically 3 turns: Athena -> Poseidon -> Hermes, at most 4). Total spoken dialogue across all turns combined MUST NOT EXCEED 30 SECONDS (under 70 words total). Each turn must be exactly 1 razor-sharp sentence under 20 words.
+Generate an intense, fast-paced argument of 4 to 5 turns. The gods must interrupt, clash, and attack each other's points directly using sharp modern words. Each turn must be 1 to 2 sentences (under 25 words). Total argument duration around 35 to 45 seconds.
   `.trim();
 
   const schema = {
@@ -374,24 +374,31 @@ Generate only as many debate turns as needed (typically 3 turns: Athena -> Posei
             speaker: 'athena',
             addressed_to: 'mortal',
             stance: 'conditional',
-            text: 'Mortal, nourishing your strength with a deliberate feast is strategic wisdom, provided your coffers permit it!',
+            text: 'If it is in your budget and fuels your focus, spending the extra money is a calculated investment in momentum.',
           },
           {
             round: 1,
             speaker: 'poseidon',
             addressed_to: 'athena',
             stance: 'against',
-            text: 'Athena gilds self-indulgence with philosophy! Small leaks sink mighty fleets; satisfy your hunger simply and guard your coin.',
+            text: 'Nonsense, Athena! Rationalizing lifestyle creep is how people bleed cash. Eat cheap and pocket the difference!',
           },
           {
             round: 1,
             speaker: 'hermes',
             addressed_to: 'poseidon',
             stance: 'for',
-            text: 'Spare us the tempest, Neptune! Feast, replenish your vital fire, and let tomorrow worry about itself.',
+            text: 'Stop agonizing over twenty dollars, Poseidon! They are starving now, they have the money, buy the lunch!',
+          },
+          {
+            round: 2,
+            speaker: 'poseidon',
+            addressed_to: 'hermes',
+            stance: 'against',
+            text: 'Twenty dollars today becomes six hundred a month! Do not confuse temporary hunger with a license to waste money.',
           },
         ],
-        debate_dynamic: 'Athena justifies conscious nourishment; Poseidon bellows against luxury leaks; Hermes urges swift mortal indulgence.',
+        debate_dynamic: 'Athena justifies strategic energy investment; Poseidon attacks lifestyle creep; Hermes urges decisive immediate action.',
       };
     }
 
@@ -410,24 +417,38 @@ Generate only as many debate turns as needed (typically 3 turns: Athena -> Posei
           speaker: 'athena',
           addressed_to: 'mortal',
           stance: 'conditional',
-          text: 'Mortal, look across decades: abandoning hard-won leverage for momentary comfort is the folly of fools!',
+          text: 'Look five years ahead. Walking away from your core foundation destroys compounding career leverage; do not surrender to short-term burnout!',
         },
         {
           round: 1,
           speaker: 'poseidon',
           addressed_to: 'athena',
           stance: 'against',
-          text: 'Your grand tapestries will not feed you, Athena! The abyss claims those who abandon safe harbor for unproven mirages.',
+          text: 'That is completely reckless, Athena! You are telling them to ignore debt and financial reality for an unproven fantasy!',
         },
         {
           round: 1,
           speaker: 'hermes',
           addressed_to: 'poseidon',
           stance: 'conditional',
-          text: 'Must mortals always choose between drowning and stone? Take the sly middle road with a cunning thirty-day trial!',
+          text: 'Calm down, Poseidon! Nobody has to burn their bridges. Take one low-risk trial this semester and test the waters first!',
+        },
+        {
+          round: 2,
+          speaker: 'athena',
+          addressed_to: 'hermes',
+          stance: 'for',
+          text: 'Testing is smart, Hermes, but do not use compromise as an excuse to avoid hard work. Master the core first!',
+        },
+        {
+          round: 2,
+          speaker: 'poseidon',
+          addressed_to: 'mortal',
+          stance: 'against',
+          text: 'Bottom line: protect your cash and downside first, because nobody rescues you when the bills come due!',
         },
       ],
-      debate_dynamic: 'Athena commands long-term imperial focus; Poseidon warns of ruinous waters; Hermes opens a cunning middle gate.',
+      debate_dynamic: 'Athena demands long-term mastery; Poseidon fiercely attacks financial blindness; Hermes forces an agile middle ground.',
     };
   }
 }

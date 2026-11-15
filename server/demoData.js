@@ -28,21 +28,35 @@ export const DEMO_DILEMMA = {
       speaker: "athena",
       addressed_to: "mortal",
       stance: "conditional",
-      text: "Mortal! Do not discard your hard-forged technical armor out of temporary weariness; true dominion requires enduring discipline!"
+      text: "Look five years ahead. Throwing away your technical degree out of burnout destroys compounding leverage; keep your core!"
     },
     {
       round: 1,
       speaker: "poseidon",
       addressed_to: "athena",
       stance: "against",
-      text: "Your philosophical theories will not pay fifteen grand in debt, Athena; protect your harbor before chasing phantom tides!"
+      text: "That is pure delusion, Athena! You expect them to ignore fifteen grand in debt while chasing an untested writing dream?"
     },
     {
       round: 1,
       speaker: "hermes",
       addressed_to: "poseidon",
       stance: "conditional",
-      text: "Why drown in Neptune's squall or freeze in Athena's decree? Declare a minor, test the waters, and keep your doors open!"
+      text: "Stop panicking, Poseidon! Nobody has to drop out. Declare a philosophy minor this semester and test the waters first."
+    },
+    {
+      round: 2,
+      speaker: "athena",
+      addressed_to: "hermes",
+      stance: "for",
+      text: "Exactly, Hermes! A dual focus creates a rare skill moat. Software engineering paired with deep ethical writing is unstoppable."
+    },
+    {
+      round: 2,
+      speaker: "poseidon",
+      addressed_to: "mortal",
+      stance: "against",
+      text: "Just do not kid yourself about the workload. If you fail core algorithms, you lose everything. Guard your downside first!"
     }
   ],
   debate_dynamic: "Athena advises long-term technical leverage; Poseidon warns of debt and parental friction; Hermes designs an agile low-risk trial.",

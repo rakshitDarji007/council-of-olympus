@@ -19,12 +19,12 @@ if (!fs.existsSync(CACHE_DIR)) {
   fs.mkdirSync(CACHE_DIR, { recursive: true });
 }
 
-// Character voice IDs
+// Character voice IDs (Ancient / Classical Roman Timbre)
 export const CHARACTER_VOICES = {
-  athena: process.env.ELEVENLABS_VOICE_ATHENA || '21m00Tcm4TlvDq8ikWAM',
-  poseidon: process.env.ELEVENLABS_VOICE_POSEIDON || 'VR6AewLTigWG4xSOukaG',
-  hermes: process.env.ELEVENLABS_VOICE_HERMES || 'ErXwobaYiN019PkySvjV',
-  odysseus: process.env.ELEVENLABS_VOICE_ODYSSEUS || 'pqHfZKP75CvOlQylNhV4',
+  athena: process.env.ELEVENLABS_VOICE_ATHENA || 'jsCqWAovK2LkecY7zXl4', // Freya: Classical regal, commanding goddess
+  poseidon: process.env.ELEVENLABS_VOICE_POSEIDON || 'N2lVS1w4EtoT3dr4eOWO', // Callum: Deep, intense, gravelly, menacing
+  hermes: process.env.ELEVENLABS_VOICE_HERMES || 'SOYHLrjzK2X1ezoPC6cr', // Harry: Swift, sharp, witty herald
+  odysseus: process.env.ELEVENLABS_VOICE_ODYSSEUS || 'JBFqnCBsd6RMkjVDRZzb', // George: Raspy, seasoned Roman orator / king
   oracle: process.env.ELEVENLABS_VOICE_ORACLE || 'MF3mGyEYCl7XYWbV9V6O',
 };
 

@@ -35,7 +35,7 @@ test('GET /api/demo returns demo dilemma and alternatives', async () => {
   assert.equal(res.status, 200);
   const data = await res.json();
   assert.ok(data.demo);
-  assert.ok(data.demo.turns.length >= 3 && data.demo.turns.length <= 4);
+  assert.ok(data.demo.turns.length >= 3 && data.demo.turns.length <= 6);
   assert.ok(data.demo.verdict);
   assert.ok(Array.isArray(data.alternates));
 });
@@ -114,7 +114,7 @@ test('POST /api/debate returns structured turns for Athena, Poseidon, Hermes', a
   assert.equal(res.status, 200);
   const data = await res.json();
   assert.ok(Array.isArray(data.turns));
-  assert.ok(data.turns.length >= 3 && data.turns.length <= 4);
+  assert.ok(data.turns.length >= 3 && data.turns.length <= 6);
   const speakers = data.turns.map((t) => t.speaker);
   assert.ok(speakers.includes('athena'));
   assert.ok(speakers.includes('poseidon'));
