@@ -184,7 +184,7 @@ export default function IntakeOracle({
                       <Sparkles size={14} /> Missing Context Needed
                     </span>
                     <span className="text-[11px] font-sans text-slate-400">
-                      Targeted Question {conversation.length + 1} of 2
+                      Targeted Question {Math.min(conversation.length + 1, 2)} of 2
                     </span>
                   </div>
 

@@ -107,7 +107,8 @@ export default function App() {
       }
     } catch (err) {
       console.error('Intake error:', err);
-      setCurrentOracleQuestion('What is drawing you toward this change, and what feels most frustrating about where you are?');
+      // On any intake error, proceed directly to council debate rather than asking a stale question
+      await initiateDebate(text, []);
     } finally {
       setIsLoading(false);
     }
@@ -134,7 +135,13 @@ export default function App() {
         return;
       }
 
-      if (res.ready || !res.next_question || updatedConversation.length >= 4) {
+      // If ready, no next question, identical question returned, or already answered 1-2 questions -> proceed to debate!
+      if (
+        res.ready ||
+        !res.next_question ||
+        res.next_question === currentOracleQuestion ||
+        updatedConversation.length >= 2
+      ) {
         await initiateDebate(dilemma, updatedConversation);
       } else {
         setCurrentOracleQuestion(res.next_question);

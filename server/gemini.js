@@ -29,12 +29,18 @@ export function logEvent(level, category, message, details = null) {
 
 const DEFAULT_TIMEOUT_MS = 18000;
 
+const FALLBACK_MODELS = [
+  'gemini-3.5-flash-lite',
+  'gemini-flash-lite-latest',
+  'gemini-3.5-flash',
+];
+
 /**
  * Call Gemini REST API with schema validation, retry, and fallback.
  */
 async function callGeminiRest({
   apiKey,
-  model = process.env.GEMINI_MODEL || 'gemini-2.5-flash',
+  model = process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite',
   systemInstruction,
   userPrompt,
   responseSchema,
@@ -86,19 +92,23 @@ async function callGeminiRest({
 
       if (!response.ok) {
         const errorText = await response.text();
-        logEvent('ERROR', 'GEMINI', `HTTP ${response.status} from Gemini: ${errorText.slice(0, 150)}`);
-        // If 404 or model not supported, try fallback model if attempt === 0
-        if (response.status === 404 && model !== 'gemini-1.5-flash') {
-          logEvent('WARN', 'GEMINI', `Model ${model} not found, falling back to gemini-1.5-flash`);
-          return callGeminiRest({
-            apiKey,
-            model: 'gemini-1.5-flash',
-            systemInstruction,
-            userPrompt,
-            responseSchema,
-            temperature,
-            retries: 0,
-          });
+        logEvent('ERROR', 'GEMINI', `HTTP ${response.status} from Gemini (${model}): ${errorText.slice(0, 150)}`);
+        
+        // If 429 quota or 404 or 503 high demand, try alternative model if available
+        if ([429, 404, 503].includes(response.status)) {
+          const nextModel = FALLBACK_MODELS.find((m) => m !== model);
+          if (nextModel && attempt === 0) {
+            logEvent('WARN', 'GEMINI', `Switching from ${model} to healthy alternative ${nextModel}`);
+            return callGeminiRest({
+              apiKey,
+              model: nextModel,
+              systemInstruction,
+              userPrompt,
+              responseSchema,
+              temperature,
+              retries: 0,
+            });
+          }
         }
         throw new Error(`Gemini HTTP Error ${response.status}: ${errorText.slice(0, 100)}`);
       }
@@ -113,7 +123,7 @@ async function callGeminiRest({
       // Parse JSON
       try {
         const parsed = JSON.parse(rawText);
-        logEvent('SUCCESS', 'GEMINI', `Received valid structured response in ${latency}ms`);
+        logEvent('SUCCESS', 'GEMINI', `Received valid structured response from ${model} in ${latency}ms`);
         return parsed;
       } catch (jsonErr) {
         logEvent('WARN', 'GEMINI', `JSON parse error on raw output: ${jsonErr.message}. Attempting regex recovery.`);
@@ -131,8 +141,7 @@ async function callGeminiRest({
       lastError = err;
       logEvent('WARN', 'GEMINI', `Attempt ${attempt + 1} failed: ${err.message}`);
       if (attempt < retries) {
-        // Wait 800ms before retry
-        await new Promise((r) => setTimeout(r, 800));
+        await new Promise((r) => setTimeout(r, 600));
       }
     }
   }
@@ -214,6 +223,22 @@ CRITICAL INSTRUCTIONS:
       userPrompt,
       responseSchema: schema,
     });
+
+    // Guard against question repetition: if Gemini returned a question already asked, advance to debate
+    const previousQuestions = conversation.map((c) => (c.question || '').toLowerCase().trim());
+    if (result.next_question) {
+      const qLower = result.next_question.toLowerCase().trim();
+      const isRepeated = previousQuestions.some((pq) => pq === qLower || pq.includes(qLower) || qLower.includes(pq));
+      if (isRepeated || conversation.length >= 2) {
+        logEvent('INFO', 'INTAKE', 'Repetition or limit prevented; proceeding to Council debate');
+        return {
+          ...result,
+          next_question: null,
+          ready: true,
+        };
+      }
+    }
+
     return result;
   } catch (err) {
     logEvent('INFO', 'FALLBACK', 'Running dynamic prompt context analyzer fallback');
@@ -228,8 +253,9 @@ CRITICAL INSTRUCTIONS:
     const mentionsTradeoff = /\b(but|versus|vs|worried|risk|scared|drained|sacrifice|give up|balance|fear|concern)\b/i.test(text);
     const mentionsOptions = /\b(or|either|between|staying|leaving|change|move|pivot)\b/i.test(text);
 
-    // If the dilemma is already rich in context, proceed directly to council with 0 questions!
-    if (count >= 1 || (wordCount >= 20 && hasMetrics && mentionsTradeoff) || (wordCount >= 28 && mentionsTradeoff)) {
+    // If already answered 1 question, or if prompt is clear/lifestyle choice, proceed directly to council!
+    const isLifestyleOrClear = /lunch|dinner|breakfast|food|eat|restaurant|snack|buy|budget/i.test(text);
+    if (count >= 1 || isLifestyleOrClear || (wordCount >= 18 && (hasMetrics || mentionsTradeoff)) || wordCount >= 25) {
       return {
         next_question: null,
         ready: true,
@@ -338,7 +364,58 @@ Generate the debate turns following the prompt rules. Exactly 6 turns total (Ath
     return result;
   } catch (err) {
     logEvent('INFO', 'FALLBACK', 'Using high-fidelity dynamic fallback debate');
-    // If the dilemma matches demo dilemma, return cached demo turns
+    // If dilemma is food/lifestyle or matches demo dilemma, return tailored turns
+    const text = dilemma.toLowerCase();
+    if (/lunch|food|restaurant|eat|dinner|meal|snack/i.test(text)) {
+      return {
+        turns: [
+          {
+            round: 1,
+            speaker: 'athena',
+            addressed_to: 'mortal',
+            stance: 'conditional',
+            text: 'If it fits your budget and energizes your day, an occasional culinary reward is strategic. Just ensure it is a conscious treat rather than an unthinking routine.',
+          },
+          {
+            round: 1,
+            speaker: 'poseidon',
+            addressed_to: 'athena',
+            stance: 'against',
+            text: 'Athena justifies every luxury with philosophy! Small leaks sink ships over twelve months. If a modest meal satisfies your hunger, pocket the difference.',
+          },
+          {
+            round: 1,
+            speaker: 'hermes',
+            addressed_to: 'poseidon',
+            stance: 'for',
+            text: 'You are hungry now, it is well within your budget, and you explicitly do not mind the extra cost. Buy the meal, enjoy the lunch, and get on with your day!',
+          },
+          {
+            round: 2,
+            speaker: 'athena',
+            addressed_to: 'hermes',
+            stance: 'for',
+            text: 'Hermes is right on utility. Good nourishment directly fuels your focus and morale. Since the downside is zero, enjoy the good food.',
+          },
+          {
+            round: 2,
+            speaker: 'poseidon',
+            addressed_to: 'mortal',
+            stance: 'conditional',
+            text: 'Go eat, then! But keep an eye on your monthly ledger so occasional treats do not become an expensive habit.',
+          },
+          {
+            round: 2,
+            speaker: 'hermes',
+            addressed_to: 'mortal',
+            stance: 'for',
+            text: 'Council settled! Go enjoy the restaurant, recharge your energy, and savor every bite.',
+          },
+        ],
+        debate_dynamic: 'Athena balances budget vs morale; Poseidon cautions against spending creep; Hermes favors immediate utility.',
+      };
+    }
+
     if (dilemma.toLowerCase().includes('major') || dilemma.toLowerCase().includes('computer science')) {
       return {
         turns: DEMO_DILEMMA.turns,
@@ -476,6 +553,30 @@ Deliver the final verdict as ODYSSEUS, survivor of the Trojan War and wanderer o
     return result;
   } catch (err) {
     logEvent('INFO', 'FALLBACK', 'Using Odysseus verdict fallback');
+    const text = dilemma.toLowerCase();
+    if (/lunch|food|restaurant|eat|dinner|meal|snack/i.test(text)) {
+      return {
+        recommendation: 'Go to the restaurant and enjoy your lunch. Since it is comfortably within your budget and you explicitly do not mind the expense, the boost in energy and morale far outweighs the minor cost.',
+        confidence: 'high',
+        confidence_reason: 'Zero downside risk: you already verified it is in your budget and your physical hunger needs immediate fuel.',
+        summary_by_god: {
+          athena: 'Acknowledged that quality nourishment boosts alertness and energy, provided it remains a deliberate treat.',
+          poseidon: 'Reminded you to watch out for lifestyle inflation so occasional treats do not become an unconscious financial drain.',
+          hermes: 'Cut through the noise: hunger is immediate, budget is clear, buy the food and move on.',
+        },
+        biggest_risk: 'Letting special-occasion dining become an everyday default that strains your savings over time.',
+        next_steps: [
+          'Go order your favorite dish without guilt or second-guessing.',
+          'Take 30 minutes to truly unplug and savor the meal.',
+          'Return to your afternoon tasks energized and refocused.',
+        ],
+        unresolved_questions: [
+          'Are there other areas in life where you overthink simple, low-risk pleasures?',
+        ],
+        closing_word: 'Enjoy the feast. A well-fueled traveler rows with stronger arms.',
+      };
+    }
+
     if (dilemma.toLowerCase().includes('major') || dilemma.toLowerCase().includes('computer science')) {
       return DEMO_DILEMMA.verdict;
     }

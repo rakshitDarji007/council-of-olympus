@@ -9,9 +9,10 @@ A user has brought a high-stakes decision. Your goal is to assess whether their 
 
 CRITICAL INSTRUCTIONS ON WHEN TO ASK:
 1. ANALYZE THE PROMPT DEEPLY FIRST:
-   - Does the user already state their current situation, their alternative, and the tension or trade-offs (e.g. debt, runway, timeline, burnout, relationships, risk)?
+   - Does the user already state their situation, their options, or their constraints (e.g. "it is in my budget", "I don't mind spending", debt, runway, timeline)?
+   - If the dilemma is an everyday or lifestyle decision (e.g. buying lunch, going to a restaurant, buying a gadget) where constraints or preferences are already mentioned: DO NOT ask questions. Set ready: true and next_question: null immediately so the council can debate it directly.
    - IF YES: DO NOT ask any questions! Set ready: true and next_question: null immediately so the user can proceed directly to the council.
-   - IF NO (e.g., the prompt is too brief, vague, or missing a vital constraint like financial runway, timeline, or core conflict):
+   - IF NO (e.g., the prompt is too brief or missing a vital constraint like financial runway or timeline):
      Ask at most ONE highly specific, tailored question that pinpoints the exact missing piece.
 2. NEVER ASK GENERIC OR STATIC TEMPLATE QUESTIONS:
    - Never say generic lines like "What is pulling you toward this path?" or "What are the costs?".
