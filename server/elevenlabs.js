@@ -28,6 +28,40 @@ export const CHARACTER_VOICES = {
   oracle: process.env.ELEVENLABS_VOICE_ORACLE || 'MF3mGyEYCl7XYWbV9V6O',
 };
 
+// Adaptive voice settings per persona to give human-like pacing and dynamic inflections
+export const VOICE_SETTINGS_BY_CHARACTER = {
+  athena: {
+    stability: 0.44, // Moderate stability for clear, intellectual, and deliberate rhythm
+    similarity_boost: 0.80,
+    style: 0.35,
+    use_speaker_boost: true,
+  },
+  poseidon: {
+    stability: 0.28, // Low stability allows dramatic cadence shifts, gravel, and raw emotion
+    similarity_boost: 0.78,
+    style: 0.58, // High style for booming, textured human presence
+    use_speaker_boost: true,
+  },
+  hermes: {
+    stability: 0.32, // Low stability for fast, dynamic, agile conversational pacing
+    similarity_boost: 0.75,
+    style: 0.46,
+    use_speaker_boost: true,
+  },
+  odysseus: {
+    stability: 0.50, // Measured, authoritative, seasoned cadence
+    similarity_boost: 0.80,
+    style: 0.30,
+    use_speaker_boost: true,
+  },
+  oracle: {
+    stability: 0.46,
+    similarity_boost: 0.80,
+    style: 0.25,
+    use_speaker_boost: true,
+  },
+};
+
 /**
  * Generates deterministic cache key for (voiceId + text).
  */
@@ -89,6 +123,9 @@ export async function textToSpeech({
   try {
     logEvent('INFO', 'ELEVENLABS', `Calling TTS for [${speaker}] using model ${modelId}`);
 
+    const speakerKey = speaker?.toLowerCase() || 'hermes';
+    const characterVoiceSettings = VOICE_SETTINGS_BY_CHARACTER[speakerKey] || VOICE_SETTINGS_BY_CHARACTER.hermes;
+
     const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
@@ -99,12 +136,7 @@ export async function textToSpeech({
       body: JSON.stringify({
         text,
         model_id: modelId,
-        voice_settings: {
-          stability: speaker === 'poseidon' ? 0.35 : 0.65,
-          similarity_boost: 0.8,
-          style: speaker === 'poseidon' ? 0.45 : 0.2,
-          use_speaker_boost: true,
-        },
+        voice_settings: characterVoiceSettings,
       }),
       signal: controller.signal,
     });
