@@ -312,66 +312,66 @@ export default function App() {
 
       {/* REFINED EDITORIAL APP BAR */}
       <header className="relative z-40 w-full bg-[#0A0F1D]/80 backdrop-blur-md border-b border-white/5 px-4 sm:px-6 py-3.5 select-none">
-        <div className="max-w-6xl mx-auto flex items-center justify-between gap-3">
+        <div className="max-w-6xl mx-auto px-4 py-3.5 flex items-center justify-between gap-4">
           {/* Logo & Brand Title */}
           <div
             onClick={handleReset}
             className="flex items-center gap-3 cursor-pointer group"
           >
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-[#D97746] to-[#E89162] flex items-center justify-center text-[#0A0F1D] font-display font-bold text-xs shadow-sm">
+            <div className="w-6 h-6 rounded-md bg-gradient-to-br from-[#D4A373] to-[#B38054] flex items-center justify-center text-zinc-950 font-serif font-bold text-xs shadow-sm">
               Ω
             </div>
             <div className="flex items-center gap-2.5">
-              <h1 className="font-display text-sm sm:text-base font-bold tracking-widest text-slate-100 group-hover:text-[#D97746] transition-colors">
-                THE COUNCIL OF OLYMPUS
+              <h1 className="font-mono text-xs sm:text-sm font-semibold tracking-[0.18em] text-zinc-100 uppercase group-hover:text-[#D4A373] transition-colors">
+                The Council of Olympus
               </h1>
-              <span className="hidden md:inline-block text-[10px] font-sans font-medium px-2 py-0.5 rounded-full bg-slate-800/80 text-slate-400 border border-white/5">
-                Strategic Decision Architecture
+              <span className="hidden md:inline-block text-[10px] font-mono tracking-wider px-2 py-0.5 rounded-md bg-white/[0.03] text-zinc-400 border border-white/[0.06]">
+                Homeric Decision Engine
               </span>
             </div>
           </div>
 
           {/* Actions & Utilities */}
-          <div className="flex items-center gap-2 sm:gap-2.5">
+          <div className="flex items-center gap-2">
             {/* Quick Demo Button */}
             <button
               onClick={handleLoadDemoDilemma}
               title="Load sample dilemma"
-              className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-sans font-medium border border-white/10 transition-all flex items-center gap-1.5"
+              className="px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-sans font-medium border border-white/[0.08] hover:border-white/20 transition flex items-center gap-1.5"
             >
-              <Zap size={13} className="text-[#D97746]" />
-              <span className="hidden sm:inline">Sample Dilemma</span>
+              <Zap size={13} className="text-[#D4A373]" />
+              <span className="hidden sm:inline">Sample Scenario</span>
             </button>
 
             {/* Audio Mute */}
             <button
               onClick={toggleMute}
               title={isMuted ? 'Unmute Audio' : 'Mute Audio'}
-              className={`p-2 rounded-xl border transition ${
+              className={`p-2 rounded-lg border transition ${
                 isMuted
                   ? 'bg-rose-950/40 text-rose-300 border-rose-500/30'
-                  : 'bg-slate-800/60 text-slate-400 hover:text-white border-white/10'
+                  : 'bg-zinc-900/80 text-zinc-400 hover:text-white border-white/[0.08]'
               }`}
             >
-              {isMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
+              {isMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
             </button>
 
             {/* Telemetry Stream */}
             <button
               onClick={() => setIsDebugOpen(true)}
               title="Telemetry & Logs"
-              className="p-2 rounded-xl bg-slate-800/60 hover:bg-slate-800 text-slate-400 hover:text-white border border-white/10 transition"
+              className="p-2 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 text-zinc-400 hover:text-white border border-white/[0.08] transition"
             >
-              <Terminal size={15} />
+              <Terminal size={14} />
             </button>
 
             {/* Settings */}
             <button
               onClick={() => setIsSettingsOpen(true)}
               title="Settings"
-              className="p-2 rounded-xl bg-slate-800/60 hover:bg-slate-800 text-slate-400 hover:text-white border border-white/10 transition"
+              className="p-2 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 text-zinc-400 hover:text-white border border-white/[0.08] transition"
             >
-              <Settings size={15} />
+              <Settings size={14} />
             </button>
           </div>
         </div>
@@ -381,13 +381,13 @@ export default function App() {
       <main className="relative z-20 flex-1 flex flex-col justify-center py-6 sm:py-8">
         {/* Loading Modal */}
         {isLoading && (
-          <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/60 backdrop-blur-md select-none animate-fade-in">
-            <div className="editorial-card p-6 sm:p-8 rounded-2xl max-w-sm text-center shadow-2xl">
-              <div className="w-8 h-8 mx-auto mb-4 border-2 border-[#D97746] border-t-transparent rounded-full animate-spin" />
-              <h3 className="font-heading text-lg font-bold text-slate-100 mb-1">
+          <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/70 backdrop-blur-md select-none animate-fade-in">
+            <div className="editorial-card p-6 sm:p-8 rounded-xl max-w-sm text-center shadow-2xl">
+              <div className="w-7 h-7 mx-auto mb-4 border-2 border-[#D4A373] border-t-transparent rounded-full animate-spin" />
+              <h3 className="font-heading text-lg font-normal text-zinc-100 mb-1">
                 The Council Deliberates
               </h3>
-              <p className="text-xs font-sans text-slate-400">
+              <p className="text-xs font-sans text-zinc-400">
                 {loadingText}
               </p>
             </div>

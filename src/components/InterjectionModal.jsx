@@ -33,39 +33,39 @@ export default function InterjectionModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md select-none animate-fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md select-none animate-fade-in">
       <div className="editorial-card rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl relative p-6 sm:p-7">
-        <GreekMeander opacity={0.25} className="mb-4" />
+        <GreekMeander opacity={0.2} className="mb-4" />
 
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-white/10 pb-3 mb-4">
-          <div className="flex items-center gap-2.5 text-slate-100">
-            <MessageSquare size={18} className="text-[#D97746]" />
-            <h3 className="font-heading text-lg font-bold">
-              Interject with New Context
+        <div className="flex items-center justify-between border-b border-white/[0.06] pb-3 mb-4">
+          <div className="flex items-center gap-2.5 text-zinc-100">
+            <MessageSquare size={16} className="text-[#D4A373]" />
+            <h3 className="font-heading text-lg font-normal">
+              Interject New Variable
             </h3>
           </div>
           <button
             onClick={onClose}
             disabled={isSubmitting}
-            className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
+            className="p-1 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition"
           >
-            <X size={18} />
+            <X size={16} />
           </button>
         </div>
 
-        <p className="text-xs text-slate-400 mb-4 font-sans leading-relaxed">
-          Introduce an overlooked constraint, clarify numbers, or address a specific council voice to reshape the remaining deliberation.
+        <p className="text-xs text-zinc-400 mb-4 font-sans leading-relaxed">
+          Introduce an overlooked constraint or challenge a specific council perspective to reshape the ongoing debate.
         </p>
 
-        {/* Target Selector */}
-        <div className="mb-4">
-          <span className="text-[11px] font-sans text-slate-400 uppercase tracking-wider block mb-2 font-medium">
-            Address Voice:
+        {/* Direct Address Selector */}
+        <div className="flex items-center gap-2 mb-4">
+          <span className="text-[10px] font-mono tracking-wider text-zinc-500 uppercase">
+            Direct To:
           </span>
-          <div className="grid grid-cols-4 gap-2 text-xs font-sans font-medium">
+          <div className="flex gap-1.5 flex-wrap">
             {[
-              { id: 'all', label: 'All Voices' },
+              { id: 'all', label: 'Full Council' },
               { id: 'athena', label: 'Athena' },
               { id: 'poseidon', label: 'Poseidon' },
               { id: 'hermes', label: 'Hermes' },
@@ -74,10 +74,10 @@ export default function InterjectionModal({
                 key={god.id}
                 type="button"
                 onClick={() => setTargetGod(god.id)}
-                className={`py-1.5 px-2 rounded-xl border transition-all ${
+                className={`px-2.5 py-1 rounded-md text-[11px] font-mono tracking-wider transition ${
                   targetGod === god.id
-                    ? 'bg-[#D97746] text-[#0A0F1D] border-[#D97746] font-bold shadow-sm'
-                    : 'bg-slate-800/60 text-slate-300 border-white/5 hover:border-white/20'
+                    ? 'bg-[#D4A373] text-zinc-950 font-bold'
+                    : 'bg-zinc-900 text-zinc-400 hover:text-white border border-white/[0.06]'
                 }`}
               >
                 {god.label}
@@ -86,60 +86,64 @@ export default function InterjectionModal({
           </div>
         </div>
 
-        {/* Form */}
+        {/* Input Form */}
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-          <div className="relative">
+          <div className="relative rounded-xl bg-[#0E0F13] border border-white/[0.08] focus-within:border-[#D4A373]/50 transition shadow-inner">
             <textarea
               rows={3}
               value={interjectionText}
               onChange={(e) => setInterjectionText(e.target.value)}
-              placeholder="What new facts or constraints should the council account for?"
-              className="w-full p-3.5 pr-12 rounded-xl bg-slate-900 border border-white/10 focus:border-[#D97746]/70 focus:outline-none focus:ring-1 focus:ring-[#D97746]/50 text-slate-100 text-sm font-sans resize-none"
+              placeholder="State your new constraint or counter-argument..."
+              className="w-full p-3.5 pr-12 bg-transparent text-sm font-sans text-zinc-100 focus:outline-none placeholder-zinc-600 resize-none"
             />
             <button
               type="button"
               onClick={isRecording ? onStopVoiceInput : onStartVoiceInput}
-              className={`absolute right-3 bottom-3 p-2 rounded-lg border transition ${
+              className={`absolute right-2.5 bottom-2.5 p-2 rounded-lg border transition ${
                 isRecording
-                  ? 'bg-rose-950 text-rose-300 border-rose-500/50 animate-pulse'
-                  : 'bg-slate-800 text-slate-400 hover:text-[#D97746] border-white/10'
+                  ? 'bg-rose-950/60 text-rose-300 border-rose-500/40 animate-pulse'
+                  : 'bg-zinc-900 text-zinc-400 hover:text-white border-white/[0.06]'
               }`}
             >
-              {isRecording ? <MicOff size={15} /> : <Mic size={15} />}
+              {isRecording ? <MicOff size={14} /> : <Mic size={14} />}
             </button>
           </div>
 
-          {/* Quick Suggestions */}
-          <div className="flex flex-wrap gap-1.5 mb-2">
-            {quickInterjections.map((suggestion, idx) => (
-              <button
-                key={idx}
-                type="button"
-                onClick={() => setInterjectionText(suggestion)}
-                className="text-[11px] font-sans text-slate-300 hover:text-white bg-slate-800/50 hover:bg-slate-800 px-2.5 py-1 rounded-lg border border-white/5 transition"
-              >
-                + {suggestion}
-              </button>
-            ))}
+          {/* Quick Interjections */}
+          <div className="flex flex-col gap-1.5 pt-1">
+            <span className="text-[10px] font-mono tracking-widest text-zinc-500 uppercase">
+              Quick Objections
+            </span>
+            <div className="flex flex-col gap-1">
+              {quickInterjections.slice(0, 3).map((item, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => setInterjectionText(item)}
+                  className="text-left text-[11px] font-sans text-zinc-400 hover:text-[#D4A373] transition truncate py-1 px-2 rounded hover:bg-white/[0.02]"
+                >
+                  "{item}"
+                </button>
+              ))}
+            </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-white/5">
+          <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-white/[0.06] mt-2">
             <button
               type="button"
               onClick={onClose}
               disabled={isSubmitting}
-              className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white text-xs font-sans font-medium transition"
+              className="px-4 py-2 rounded-lg text-xs font-sans text-zinc-400 hover:text-white transition"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={!interjectionText.trim() || isSubmitting}
-              className="px-5 py-2 rounded-xl bg-[#D97746] hover:bg-[#E89162] text-[#0A0F1D] text-xs font-sans font-bold uppercase tracking-wide transition flex items-center gap-1.5 shadow disabled:opacity-50"
+              className="px-5 py-2 rounded-lg bg-zinc-100 hover:bg-white text-zinc-950 text-xs font-sans font-semibold tracking-wider uppercase transition shadow flex items-center gap-1.5 disabled:opacity-40"
             >
               <Send size={13} />
-              {isSubmitting ? 'Integrating...' : 'Submit to Council'}
+              <span>{isSubmitting ? 'Summoning...' : 'Submit Objection'}</span>
             </button>
           </div>
         </form>

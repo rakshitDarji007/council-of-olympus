@@ -1,42 +1,30 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
 /**
- * Clean, subtle ambient backdrop with refined micro-star points and soft atmospheric glow.
- * No cartoonish pixel clouds or distracting animations.
+ * Architectural atmospheric background:
+ * Soft overhead zenith light and deep matte vignetting.
+ * Minimalist, elegant, and quiet without distracting particle clutter.
  */
 export default function StarBackground() {
-  const stars = useMemo(() => {
-    const list = [];
-    for (let i = 0; i < 45; i++) {
-      const top = ((i * 37) % 94) + 3;
-      const left = ((i * 67) % 96) + 2;
-      const size = i % 4 === 0 ? 2 : 1.5;
-      const opacity = 0.15 + ((i * 0.08) % 0.45);
-      list.push({ top, left, size, opacity });
-    }
-    return list;
-  }, []);
-
   return (
     <div className="fixed inset-0 pointer-events-none select-none z-0 overflow-hidden">
-      {/* Ambient gradient blooms */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[350px] bg-gradient-to-b from-[#D97746]/10 via-[#1E5B6A]/5 to-transparent blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-32 left-0 w-[500px] h-[300px] bg-[#1E5B6A]/10 blur-3xl pointer-events-none" />
+      {/* Subtle zenith skylight */}
+      <div 
+        className="absolute -top-32 left-1/2 -translate-x-1/2 w-[900px] h-[480px] pointer-events-none opacity-40"
+        style={{
+          background: 'radial-gradient(ellipse at center, rgba(212, 163, 115, 0.12) 0%, rgba(212, 163, 115, 0.02) 45%, transparent 70%)',
+          filter: 'blur(40px)',
+        }}
+      />
 
-      {/* Discrete micro-stars */}
-      {stars.map((s, idx) => (
-        <div
-          key={idx}
-          className="absolute rounded-full bg-[#F8F6F0]"
-          style={{
-            top: `${s.top}%`,
-            left: `${s.left}%`,
-            width: `${s.size}px`,
-            height: `${s.size}px`,
-            opacity: s.opacity,
-          }}
-        />
-      ))}
+      {/* Discrete bottom corner depth */}
+      <div 
+        className="absolute -bottom-40 right-1/4 w-[600px] h-[350px] pointer-events-none opacity-20"
+        style={{
+          background: 'radial-gradient(circle at center, rgba(42, 115, 133, 0.1) 0%, transparent 70%)',
+          filter: 'blur(60px)',
+        }}
+      />
     </div>
   );
 }

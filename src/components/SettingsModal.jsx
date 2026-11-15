@@ -46,112 +46,99 @@ export default function SettingsModal({ isOpen = false, onClose }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md select-none animate-fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md select-none animate-fade-in">
       <div className="editorial-card rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl relative p-6 sm:p-7">
-        <GreekMeander opacity={0.25} className="mb-4" />
+        <GreekMeander opacity={0.2} className="mb-4" />
 
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-white/10 pb-3 mb-4">
-          <div className="flex items-center gap-2 text-slate-100">
-            <Settings size={18} className="text-[#D97746]" />
-            <h3 className="font-heading text-lg font-bold">
+        <div className="flex items-center justify-between border-b border-white/[0.06] pb-3 mb-4">
+          <div className="flex items-center gap-2 text-zinc-100">
+            <Settings size={16} className="text-[#D4A373]" />
+            <h3 className="font-heading text-lg font-normal">
               Engine Configuration
             </h3>
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
+            className="p-1 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition"
           >
-            <X size={18} />
+            <X size={16} />
           </button>
         </div>
 
-        {/* Telemetry Status */}
-        <div className="mb-5 p-3.5 rounded-xl bg-slate-900/90 border border-white/5 text-xs font-sans">
-          <div className="flex items-center justify-between mb-2">
-            <span className="font-medium text-slate-300 flex items-center gap-1.5">
-              <Server size={14} className="text-[#D97746]" /> Council Backend Status
-            </span>
-            <span className="flex items-center gap-1.5 text-emerald-400">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              Connected
-            </span>
-          </div>
-
-          <div className="grid grid-cols-2 gap-2 text-slate-400">
-            <div>
-              <span>Gemini: </span>
-              <span className={health?.gemini?.configured ? 'text-emerald-400 font-medium' : 'text-amber-400'}>
-                {health?.gemini?.configured ? 'Active' : 'Fallback / Heuristic'}
+        {/* System Diagnostics */}
+        {health && (
+          <div className="mb-5 p-3.5 rounded-xl bg-[#0E0F13] border border-white/[0.06] flex flex-col gap-2 text-xs font-mono">
+            <div className="flex items-center justify-between">
+              <span className="text-zinc-500">Google Gemini API:</span>
+              <span className={health.gemini?.configured ? 'text-emerald-400' : 'text-amber-400'}>
+                {health.gemini?.configured ? `Connected (${health.gemini?.model})` : 'Offline / Fallback'}
               </span>
             </div>
-            <div>
-              <span>Model: </span>
-              <span className="text-slate-200 font-mono">{health?.gemini?.model || 'gemini-2.5-flash'}</span>
-            </div>
-            <div>
-              <span>ElevenLabs: </span>
-              <span className={health?.elevenlabs?.configured ? 'text-emerald-400 font-medium' : 'text-amber-400'}>
-                {health?.elevenlabs?.configured ? 'Active' : 'Web Speech API'}
+            <div className="flex items-center justify-between">
+              <span className="text-zinc-500">ElevenLabs TTS:</span>
+              <span className={health.elevenlabs?.configured ? 'text-emerald-400' : 'text-zinc-500'}>
+                {health.elevenlabs?.configured ? 'Configured' : 'Client Speech Synthesis'}
               </span>
             </div>
-            <div>
-              <span>Cache: </span>
-              <span className="text-slate-200">{health?.cache?.cachedAudioFiles || 0} audio files</span>
+            <div className="flex items-center justify-between">
+              <span className="text-zinc-500">Disk Cache Audio:</span>
+              <span className="text-zinc-300">{health.cache?.cachedAudioFiles || 0} clips</span>
             </div>
           </div>
-        </div>
+        )}
 
-        {/* Key Input Form */}
-        <form onSubmit={handleSave} className="flex flex-col gap-4 font-sans">
-          <div>
-            <label className="text-xs font-semibold text-slate-200 uppercase tracking-wider block mb-1.5 flex items-center gap-1.5">
-              <Key size={13} className="text-[#D97746]" />
-              Gemini API Key (Optional Override)
+        <form onSubmit={handleSave} className="flex flex-col gap-4">
+          {/* Gemini Key */}
+          <div className="flex flex-col gap-1.5">
+            <label className="text-[11px] font-mono tracking-wider text-zinc-400 uppercase flex items-center gap-1.5">
+              <Key size={12} className="text-[#D4A373]" />
+              <span>Google Gemini API Key</span>
             </label>
             <input
               type="password"
               value={geminiKey}
               onChange={(e) => setGeminiKey(e.target.value)}
-              placeholder={health?.gemini?.configured ? '•••••••••••••••• (configured on server)' : 'AIzaSy...'}
-              className="w-full p-2.5 rounded-xl bg-slate-900 border border-white/10 focus:border-[#D97746]/70 focus:outline-none text-xs text-slate-100 font-mono"
+              placeholder="Paste new GEMINI_API_KEY to override..."
+              className="w-full p-3 rounded-lg bg-[#0E0F13] border border-white/[0.08] focus:border-[#D4A373]/50 text-zinc-100 text-xs font-mono focus:outline-none placeholder-zinc-600"
             />
           </div>
 
-          <div>
-            <label className="text-xs font-semibold text-slate-200 uppercase tracking-wider block mb-1.5 flex items-center gap-1.5">
-              <Volume2 size={13} className="text-[#D97746]" />
-              ElevenLabs API Key (Optional Override)
+          {/* ElevenLabs Key */}
+          <div className="flex flex-col gap-1.5">
+            <label className="text-[11px] font-mono tracking-wider text-zinc-400 uppercase flex items-center gap-1.5">
+              <Volume2 size={12} className="text-[#D4A373]" />
+              <span>ElevenLabs API Key (Optional)</span>
             </label>
             <input
               type="password"
               value={elevenLabsKey}
               onChange={(e) => setElevenLabsKey(e.target.value)}
-              placeholder={health?.elevenlabs?.configured ? '•••••••••••••••• (configured on server)' : 'xi-api-key...'}
-              className="w-full p-2.5 rounded-xl bg-slate-900 border border-white/10 focus:border-[#D97746]/70 focus:outline-none text-xs text-slate-100 font-mono"
+              placeholder="Paste ELEVENLABS_API_KEY..."
+              className="w-full p-3 rounded-lg bg-[#0E0F13] border border-white/[0.08] focus:border-[#D4A373]/50 text-zinc-100 text-xs font-mono focus:outline-none placeholder-zinc-600"
             />
           </div>
 
           {saveStatus && (
-            <div className="p-2 rounded-lg bg-emerald-950/40 border border-emerald-500/30 text-xs text-emerald-300 text-center font-sans">
-              {saveStatus}
+            <div className="p-2.5 rounded-lg bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 text-xs font-mono flex items-center gap-2">
+              <Check size={14} />
+              <span>{saveStatus}</span>
             </div>
           )}
 
-          <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-white/5">
+          <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-white/[0.06] mt-2">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white text-xs font-sans transition"
+              className="px-4 py-2 rounded-lg text-xs font-sans text-zinc-400 hover:text-white transition"
             >
               Close
             </button>
             <button
               type="submit"
               disabled={isLoading}
-              className="px-5 py-2 rounded-xl bg-[#D97746] hover:bg-[#E89162] text-[#0A0F1D] text-xs font-sans font-bold uppercase tracking-wide transition shadow flex items-center gap-1.5"
+              className="px-5 py-2 rounded-lg bg-zinc-100 hover:bg-white text-zinc-950 text-xs font-sans font-semibold tracking-wider uppercase transition shadow disabled:opacity-40"
             >
-              <Check size={14} />
               {isLoading ? 'Saving...' : 'Apply Keys'}
             </button>
           </div>

@@ -17,23 +17,23 @@ export default function SubtitleBar({
   const [displayedText, setDisplayedText] = useState('');
 
   const speakerMeta = {
-    athena: { name: 'ATHENA', color: '#94B49F', title: 'Strategic Counsel' },
-    poseidon: { name: 'POSEIDON', color: '#2A7385', title: 'Risk & Runway' },
-    hermes: { name: 'HERMES', color: '#D97746', title: 'Agile Optionality' },
-    oracle: { name: 'THE FACILITATOR', color: '#D97746', title: 'Context Discovery' },
-    odysseus: { name: 'ODYSSEUS', color: '#F8F6F0', title: 'The Ruling' },
+    athena: { name: 'ATHENA', color: '#94B49F', title: 'Strategic Mastery' },
+    poseidon: { name: 'POSEIDON', color: '#2A7385', title: 'Downside Exposure' },
+    hermes: { name: 'HERMES', color: '#D4A373', title: 'Agile Optionality' },
+    oracle: { name: 'FACILITATOR', color: '#D4A373', title: 'Context Discovery' },
+    odysseus: { name: 'ODYSSEUS', color: '#F4F4F6', title: 'The Ruling' },
   };
 
   const currentSpeaker = currentTurn?.speaker?.toLowerCase() || 'athena';
   const meta = speakerMeta[currentSpeaker] || speakerMeta.athena;
-  const fullText = currentTurn?.text || 'The council gathers in silence...';
+  const fullText = currentTurn?.text || 'The council deliberates in quiet consideration...';
 
-  // Smooth typewriter effect
+  // Crisp, readable typewriter effect
   useEffect(() => {
     setDisplayedText('');
     let idx = 0;
-    const totalDurationMs = 2400; // Snappy typing
-    const stepInterval = Math.max(12, Math.floor(totalDurationMs / (fullText.length || 1)));
+    const totalDurationMs = 2000;
+    const stepInterval = Math.max(10, Math.floor(totalDurationMs / (fullText.length || 1)));
 
     const timer = setInterval(() => {
       idx++;
@@ -48,39 +48,39 @@ export default function SubtitleBar({
 
   return (
     <div className="w-full max-w-4xl mx-auto px-4 select-none">
-      <div className="editorial-card rounded-2xl p-5 sm:p-6 shadow-2xl relative">
-        {/* Header Row */}
-        <div className="flex items-center justify-between border-b border-white/5 pb-3 mb-3">
-          <div className="flex items-center gap-2.5 flex-wrap">
+      <div className="editorial-card rounded-2xl p-6 relative">
+        {/* Top Metadata Row */}
+        <div className="flex items-center justify-between border-b border-white/[0.06] pb-3 mb-4">
+          <div className="flex items-center gap-2.5">
             <span
-              className="font-display text-base sm:text-lg font-bold tracking-wider"
+              className="font-mono text-xs font-bold tracking-widest uppercase"
               style={{ color: meta.color }}
             >
               {meta.name}
             </span>
-            <span className="text-xs text-slate-400 font-sans">
+            <span className="text-zinc-500 text-xs font-sans">
               • {meta.title}
             </span>
             {currentTurn?.addressed_to && (
-              <span className="text-[11px] text-[#D97746] bg-[#D97746]/10 px-2 py-0.5 rounded border border-[#D97746]/20 font-sans">
-                Addressing: {currentTurn.addressed_to.toUpperCase()}
+              <span className="text-[10px] font-mono text-[#D4A373] bg-[#D4A373]/10 px-2 py-0.5 rounded border border-[#D4A373]/20">
+                To: {currentTurn.addressed_to.toUpperCase()}
               </span>
             )}
           </div>
 
           {/* Turn Progress Indicator */}
-          <div className="flex items-center gap-2 text-xs text-slate-400 font-sans">
-            <span className="hidden sm:inline">Turn {turnIndex + 1} of {totalTurns}</span>
-            <div className="flex gap-1.5 ml-1">
+          <div className="flex items-center gap-2 text-xs font-mono text-zinc-400">
+            <span>Turn {turnIndex + 1} of {totalTurns}</span>
+            <div className="flex gap-1 ml-1.5">
               {Array.from({ length: totalTurns }).map((_, i) => (
                 <div
                   key={i}
-                  className={`w-2 h-2 rounded-full transition-all ${
+                  className={`w-1.5 h-1.5 rounded-full transition-all ${
                     i === turnIndex
-                      ? 'bg-[#D97746] scale-125'
+                      ? 'bg-[#D4A373] scale-125'
                       : i < turnIndex
-                      ? 'bg-slate-400'
-                      : 'bg-slate-700'
+                      ? 'bg-zinc-400'
+                      : 'bg-zinc-700'
                   }`}
                 />
               ))}
@@ -88,69 +88,68 @@ export default function SubtitleBar({
           </div>
         </div>
 
-        {/* Dynamic Typewriter Text in Literary Serif */}
-        <div className="min-h-[60px] sm:min-h-[70px] flex items-center mb-4">
-          <p className="text-base sm:text-xl text-slate-100 font-serif leading-relaxed tracking-wide font-normal">
+        {/* Dynamic Spoken Dialogue */}
+        <div className="min-h-[64px] flex items-center mb-5">
+          <p className="text-lg sm:text-xl text-zinc-100 font-serif leading-relaxed font-normal">
             "{displayedText}"
             {displayedText.length < fullText.length && (
-              <span className="inline-block w-1.5 h-4 ml-1 bg-[#D97746] animate-pulse" />
+              <span className="inline-block w-1.5 h-4 ml-1 bg-[#D4A373] animate-pulse" />
             )}
           </p>
         </div>
 
-        {/* Action Controls Bar */}
-        <div className="flex items-center justify-between pt-3 border-t border-white/5 flex-wrap gap-2">
-          {/* Interject Button */}
-          <button
-            onClick={onOpenInterject}
-            disabled={isGenerating}
-            className="px-4 py-2 rounded-xl bg-[#D97746] hover:bg-[#E89162] text-[#0A0F1D] font-sans text-xs font-bold tracking-wide uppercase transition-all flex items-center gap-2 shadow hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
-          >
-            <MessageSquare size={14} />
-            Interject with New Context
-          </button>
-
-          {/* Controls Group */}
+        {/* Player Controls Bar */}
+        <div className="flex items-center justify-between pt-3 border-t border-white/[0.05] flex-wrap gap-3">
           <div className="flex items-center gap-2">
             {/* Play/Pause */}
             <button
               onClick={onTogglePlayPause}
               title={isPlaying ? 'Pause' : 'Play'}
-              className="p-2 rounded-xl bg-slate-800/60 hover:bg-slate-800 text-slate-300 hover:text-white border border-white/10 transition"
+              className="p-2 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-white/[0.06] transition"
             >
               {isPlaying ? <Pause size={15} /> : <Play size={15} />}
-            </button>
-
-            {/* Mute */}
-            <button
-              onClick={onToggleMute}
-              title={isMuted ? 'Unmute' : 'Mute'}
-              className={`p-2 rounded-xl border transition ${
-                isMuted
-                  ? 'bg-rose-950/40 text-rose-300 border-rose-500/30'
-                  : 'bg-slate-800/60 text-slate-300 hover:text-white border-white/10'
-              }`}
-            >
-              {isMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
             </button>
 
             {/* Next Turn */}
             <button
               onClick={onNextTurn}
-              disabled={turnIndex >= totalTurns - 1}
-              className="px-3 py-2 rounded-xl bg-slate-800/60 hover:bg-slate-800 text-slate-300 hover:text-[#D97746] border border-white/10 text-xs font-sans font-medium flex items-center gap-1.5 transition disabled:opacity-40"
+              title="Next Council Argument"
+              className="p-2 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-white/[0.06] transition"
             >
-              <SkipForward size={14} />
-              <span className="hidden sm:inline">Next Turn</span>
+              <SkipForward size={15} />
+            </button>
+
+            {/* Audio Mute */}
+            <button
+              onClick={onToggleMute}
+              title={isMuted ? 'Unmute' : 'Mute'}
+              className={`p-2 rounded-lg border transition ${
+                isMuted
+                  ? 'bg-rose-950/40 text-rose-300 border-rose-500/30'
+                  : 'bg-zinc-900 text-zinc-400 hover:text-white border-white/[0.06]'
+              }`}
+            >
+              {isMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
+            </button>
+          </div>
+
+          <div className="flex items-center gap-2.5">
+            {/* Interject */}
+            <button
+              onClick={onOpenInterject}
+              className="px-3.5 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-200 text-xs font-sans font-medium border border-white/[0.08] hover:border-white/20 transition flex items-center gap-1.5"
+            >
+              <MessageSquare size={13} className="text-[#D4A373]" />
+              <span>Interject Objection</span>
             </button>
 
             {/* Skip to Verdict */}
             <button
               onClick={onSkipToVerdict}
-              className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white font-sans text-xs font-medium border border-white/15 transition-all flex items-center gap-1.5"
+              className="px-4 py-1.5 rounded-lg bg-zinc-100 hover:bg-white text-zinc-950 text-xs font-sans font-semibold tracking-wider uppercase transition shadow flex items-center gap-1.5"
             >
-              <FastForward size={14} />
-              <span>Verdict</span>
+              <FastForward size={13} />
+              <span>Proceed to Ruling</span>
             </button>
           </div>
         </div>

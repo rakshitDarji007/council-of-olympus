@@ -32,20 +32,20 @@ export default function DebugConsole({ isOpen = false, onClose }) {
   });
 
   const levelBadges = {
-    SUCCESS: { bg: 'bg-emerald-950/60', text: 'text-emerald-300', icon: CheckCircle },
-    INFO: { bg: 'bg-slate-850', text: 'text-slate-300', icon: Info },
-    WARN: { bg: 'bg-amber-950/60', text: 'text-amber-300', icon: AlertTriangle },
-    ERROR: { bg: 'bg-rose-950/60', text: 'text-rose-300', icon: AlertCircle },
+    SUCCESS: { text: 'text-emerald-400', icon: CheckCircle },
+    INFO: { text: 'text-zinc-400', icon: Info },
+    WARN: { text: 'text-amber-400', icon: AlertTriangle },
+    ERROR: { text: 'text-rose-400', icon: AlertCircle },
   };
 
   return (
-    <div className="fixed inset-y-0 right-0 z-50 w-full sm:w-[480px] bg-[#0A0F1D]/95 backdrop-blur-xl border-l border-white/10 shadow-2xl flex flex-col select-none animate-slide-up">
+    <div className="fixed inset-y-0 right-0 z-50 w-full sm:w-[480px] bg-[#0B0C0E]/95 backdrop-blur-xl border-l border-white/[0.08] shadow-2xl flex flex-col select-none animate-slide-up">
       {/* Header */}
-      <div className="p-4 bg-slate-900/80 border-b border-white/10 flex items-center justify-between">
-        <div className="flex items-center gap-2 text-slate-100">
-          <Terminal size={17} className="text-[#D97746]" />
-          <h3 className="font-heading text-base font-bold">
-            Telemetry & Server Stream
+      <div className="p-4 bg-zinc-950/80 border-b border-white/[0.06] flex items-center justify-between">
+        <div className="flex items-center gap-2 text-zinc-100">
+          <Terminal size={15} className="text-[#D4A373]" />
+          <h3 className="font-mono text-xs font-semibold tracking-wider uppercase">
+            Telemetry & Event Stream
           </h3>
         </div>
 
@@ -53,44 +53,41 @@ export default function DebugConsole({ isOpen = false, onClose }) {
           <button
             onClick={fetchLogs}
             title="Refresh logs"
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
+            className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition"
           >
-            <RefreshCw size={15} />
+            <RefreshCw size={13} />
           </button>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
+            className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition"
           >
-            <X size={17} />
+            <X size={15} />
           </button>
         </div>
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex items-center gap-1.5 p-2.5 bg-slate-900/40 border-b border-white/5 text-[11px] font-sans">
-        {['ALL', 'SUCCESS', 'INFO', 'WARN', 'ERROR'].map((lvl) => (
+      <div className="flex items-center gap-1.5 p-2 bg-[#0E0F13] border-b border-white/[0.05] overflow-x-auto text-[11px] font-mono">
+        {['ALL', 'INFO', 'SUCCESS', 'WARN', 'ERROR'].map((lvl) => (
           <button
             key={lvl}
             onClick={() => setFilter(lvl)}
-            className={`px-2.5 py-1 rounded-lg transition-all font-medium ${
+            className={`px-2.5 py-1 rounded-md transition ${
               filter === lvl
-                ? 'bg-[#D97746] text-[#0A0F1D] font-bold'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                ? 'bg-[#D4A373] text-zinc-950 font-bold'
+                : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
             }`}
           >
             {lvl}
           </button>
         ))}
-        <span className="ml-auto text-[10px] text-slate-500 font-mono">
-          {filteredLogs.length} events
-        </span>
       </div>
 
-      {/* Logs List */}
-      <div className="flex-1 overflow-y-auto p-3 space-y-2 font-mono text-xs">
+      {/* Log Feed */}
+      <div className="flex-1 overflow-y-auto p-3 flex flex-col gap-2 font-mono text-xs">
         {filteredLogs.length === 0 ? (
-          <div className="p-8 text-center text-slate-500 italic font-sans">
-            No telemetry recorded yet...
+          <div className="p-6 text-center text-zinc-600">
+            No telemetry events recorded yet.
           </div>
         ) : (
           filteredLogs.map((log, idx) => {
@@ -101,51 +98,43 @@ export default function DebugConsole({ isOpen = false, onClose }) {
             return (
               <div
                 key={idx}
-                className="p-2.5 rounded-xl bg-slate-900/60 border border-white/5 hover:border-white/10 transition"
+                className="p-2.5 rounded-lg bg-zinc-900/60 border border-white/[0.04] hover:border-white/[0.1] transition flex flex-col gap-1 cursor-pointer"
+                onClick={() => setExpandedIdx(isExpanded ? null : idx)}
               >
-                <div
-                  className="flex items-start justify-between gap-2 cursor-pointer"
-                  onClick={() => setExpandedIdx(isExpanded ? null : idx)}
-                >
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span
-                      className={`px-1.5 py-0.5 rounded text-[10px] font-bold uppercase flex items-center gap-1 ${badge.bg} ${badge.text}`}
-                    >
-                      <Icon size={10} />
-                      {log.level}
-                    </span>
-                    <span className="text-[#D97746] font-semibold">
+                <div className="flex items-center justify-between text-[11px]">
+                  <div className="flex items-center gap-1.5">
+                    <Icon size={12} className={badge.text} />
+                    <span className="font-bold text-zinc-300">
                       [{log.category}]
                     </span>
-                    <span className="text-slate-200 break-all font-sans">
-                      {log.message}
-                    </span>
+                    <span className={badge.text}>{log.level}</span>
                   </div>
-
-                  <div className="shrink-0 flex items-center text-slate-500 text-[10px]">
-                    <span className="mr-1">
-                      {new Date(log.timestamp).toLocaleTimeString()}
-                    </span>
-                    {log.details && (
-                      isExpanded ? <ChevronDown size={13} /> : <ChevronRight size={13} />
-                    )}
-                  </div>
+                  <span className="text-zinc-600">
+                    {new Date(log.timestamp).toLocaleTimeString()}
+                  </span>
                 </div>
 
-                {/* Details */}
-                {isExpanded && log.details && (
-                  <div className="mt-2 pt-2 border-t border-white/5 text-[11px] text-slate-300 bg-slate-950 p-2.5 rounded-lg overflow-x-auto whitespace-pre-wrap">
-                    {log.details}
+                <p className="text-zinc-200 text-xs break-words">
+                  {log.message}
+                </p>
+
+                {log.details && (
+                  <div className="mt-1 pt-1 border-t border-white/[0.04] text-[11px] text-zinc-400">
+                    {isExpanded ? (
+                      <pre className="whitespace-pre-wrap overflow-x-auto bg-black/40 p-2 rounded">
+                        {log.details}
+                      </pre>
+                    ) : (
+                      <span className="text-zinc-600 truncate block">
+                        Details: {log.details.slice(0, 70)}...
+                      </span>
+                    )}
                   </div>
                 )}
               </div>
             );
           })
         )}
-      </div>
-
-      <div className="p-2.5 bg-slate-900 border-t border-white/10 text-[10px] text-slate-400 text-center font-sans">
-        Real-time server & model event telemetry.
       </div>
     </div>
   );

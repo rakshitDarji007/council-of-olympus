@@ -4,7 +4,7 @@ import GreekMeander from './GreekMeander.jsx';
 
 /**
  * Olympian Council Chamber Stage:
- * Athena, Poseidon, and Hermes arranged in a clean, executive strategic formation.
+ * Athena, Poseidon, and Hermes arranged in an executive architectural formation.
  */
 export default function CouncilStage({
   currentSpeaker = 'athena',
@@ -34,18 +34,21 @@ export default function CouncilStage({
   return (
     <div className="w-full max-w-5xl mx-auto flex flex-col items-center select-none px-4">
       {/* Editorial Tension Header */}
-      <div className="w-full max-w-2xl text-center mb-6">
-        <GreekMeander opacity={0.3} className="mb-2" />
-        {debateDynamic && (
-          <p className="text-xs font-sans tracking-wide text-[#D97746] font-medium uppercase">
+      <div className="w-full max-w-xl text-center mb-8">
+        <GreekMeander opacity={0.25} className="mb-3" />
+        {debateDynamic ? (
+          <p className="text-xs font-mono tracking-widest text-[#D4A373] uppercase font-medium">
             {debateDynamic}
+          </p>
+        ) : (
+          <p className="text-xs font-mono tracking-widest text-zinc-500 uppercase">
+            Tripartite Adversarial Deliberation
           </p>
         )}
       </div>
 
       {/* Council Podiums Grid */}
-      <div className="w-full flex flex-wrap items-center justify-center gap-4 sm:gap-6 lg:gap-8">
-        {/* Athena */}
+      <div className="w-full flex flex-wrap items-center justify-center gap-5 sm:gap-6 lg:gap-7">
         <GodPodium
           speaker="athena"
           isActive={activeSpeakerNorm === 'athena'}
@@ -55,7 +58,6 @@ export default function CouncilStage({
           isChallenging={isChallenging}
         />
 
-        {/* Poseidon */}
         <GodPodium
           speaker="poseidon"
           isActive={activeSpeakerNorm === 'poseidon'}
@@ -65,7 +67,6 @@ export default function CouncilStage({
           isChallenging={isChallenging}
         />
 
-        {/* Hermes */}
         <GodPodium
           speaker="hermes"
           isActive={activeSpeakerNorm === 'hermes'}
